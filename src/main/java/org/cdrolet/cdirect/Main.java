@@ -25,7 +25,7 @@ import java.util.Collections;
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
 public class Main {
-
+    OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
     }
@@ -62,11 +62,8 @@ public class Main {
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
 
-        OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
         try {
-          URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
-            HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
-
+         HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
          consumer.sign(redirect);
          redirect.connect();
         }catch (Exception ex) {
