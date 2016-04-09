@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 
 
@@ -27,16 +29,22 @@ public class Main {
         return "Hello";
     }
 
-/*
-    @RequestMapping(value = "/subscription/create/notification")
-    ResponseEntity createSubscribe(@RequestParam URL url) {
+
+    @RequestMapping(value = "/subscription/create2/notification")
+    ResponseEntity createSubscribe(@RequestParam Object url) {
+        System.out.println(">>>>>> " + url.toString());
 
         return ResponseEntity.accepted().build();
     }
-*/
 
     @RequestMapping(value = "/subscription/create/notification")
-    ResponseEntity createSubscribe() {
+    ResponseEntity createSubscribe(HttpServletRequest request) {
+        System.out.println("******");
+        log.info("+++++++++++");
+
+        System.out.println(" ==> " + request.getRequestURL());
+        log.info(" ->> " + request.getRequestURL());
+
 
         return ResponseEntity.accepted().build();
     }
