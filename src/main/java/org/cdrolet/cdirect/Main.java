@@ -94,6 +94,18 @@ public class Main {
             log.error("error occur ",ex);
         }
 
+        try {
+            URL url = new URL(request.getRequestURL().toString());
+            HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
+            oauth.signpost.http.HttpRequest req = consumer.sign(redirect);
+
+            redirect.connect();
+            System.out.println("xxxxxxxxx Response: " + redirect.getResponseCode() + " "
+                    + redirect.getResponseMessage());
+        } catch (Exception ex) {
+            log.error("error occur ",ex);
+        }
+
         //401 or 403
         return ResponseEntity.accepted().build();
     }
