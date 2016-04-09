@@ -66,12 +66,17 @@ public class Main {
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
 
+
+
         Map<String, String> oAuthHeader = Splitter.on(",")
                 .omitEmptyStrings()
                 .trimResults()
                 .withKeyValueSeparator("=")
                 .split(request.getHeader("authorization"));
 
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>" + oAuthHeader);
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!" + oAuthHeader.get("oauth_consumer_key"));
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@" + oAuthHeader.get("oauth_signature"));
 
         OAuthConsumer consumer = new DefaultOAuthConsumer(
                 oAuthHeader.get("oauth_consumer_key"),
@@ -80,7 +85,6 @@ public class Main {
         try {
 
             consumer.setSigningStrategy(new QueryStringSigningStrategy());
-
 
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
             oauth.signpost.http.HttpRequest req = consumer.sign(redirect);
