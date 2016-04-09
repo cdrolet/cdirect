@@ -12,7 +12,7 @@
 
     <groupId>cdrolet</groupId>
     <artifactId>cdirect</artifactId>
-    <version>1.2</version>
+    <version>1.2-SNAPSHOT</version>
 
     <properties>
         <guava.version>18.0</guava.version>
