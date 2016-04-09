@@ -53,7 +53,7 @@ public class Main {
 */
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(
-            @RequestParam(value = "eventUrl", required = false) String eventUrl,
+            @RequestParam(value = "eventUrl", required = false) URL eventUrl,
             @RequestParam(value = "token", required = false) String token,
             HttpServletRequest request) {
 
@@ -64,10 +64,10 @@ public class Main {
 
         OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
         try {
-        URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
-        HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
+          URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
+            HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
 
-         consumer.sign(request);
+         consumer.sign(redirect);
          redirect.connect();
         }catch (Exception ex) {
             log.error("error occur ",ex);
