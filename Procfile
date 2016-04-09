@@ -1,1 +1,1 @@
-web:    java -cp target/classes:target/dependency/* Main
+web:    java java -jar target/charles-direct-1.2.jar
