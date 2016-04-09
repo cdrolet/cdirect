@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URL;
+
 
 @RestController
 @SpringBootApplication
@@ -26,7 +28,7 @@ public class Main {
     }
 
     @RequestMapping(value = "/subscription/create/notification")
-    ResponseEntity createSubscribe(@RequestParam String url) {
+    ResponseEntity createSubscribe(@RequestParam URL url) {
 
         return ResponseEntity.accepted().build();
     }
