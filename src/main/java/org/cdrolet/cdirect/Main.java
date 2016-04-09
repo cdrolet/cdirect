@@ -3,6 +3,8 @@ package org.cdrolet.cdirect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.basic.DefaultOAuthConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,17 +36,41 @@ public class Main {
         return "Hello";
     }
 
+ /*   @RequestMapping(value = "/login")
+    ResponseEntity login(@RequestParam URL openIdUrl, HttpServletRequest request) {
+        Collections.list(request.getHeaderNames())
+                .forEach(s -> log.info(s + " -** " + request.getHeader(s)));
+        log.info(" -** query  :" + request.getQueryString());
+        log.info(" -** url    :" + request.getRequestURL());
+
+        OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
+        URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
+        HttpURLConnection request = (HttpURLConnection) url.openConnection();
+        consumer.sign(request);
+        request.connect();
+
+    }
+*/
     @RequestMapping(value = "/subscription/create/notification")
-    ResponseEntity createSubscribe(HttpServletRequest request) {
+    ResponseEntity createSubscribe(
+            @RequestParam(value = "eventUrl", required = false) String eventUrl,
+            @RequestParam(value = "token", required = false) String token,
+            HttpServletRequest request) {
 
         Collections.list(request.getHeaderNames())
                 .forEach(s -> log.info(s + " -> " + request.getHeader(s)));
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
+
+        OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
         try {
-            log.info(" ->> parts    :" + request.getParts());
-        } catch(Exception ex) {
-            log.info("no parts");
+        URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
+        HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
+
+         consumer.sign(request);
+         redirect.connect();
+        }catch (Exception ex) {
+            log.error("error occur ",ex);
         }
 
         return ResponseEntity.accepted().build();
