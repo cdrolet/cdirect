@@ -66,13 +66,11 @@ public class Main {
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
 
-
-
         Map<String, String> oAuthHeader = Splitter.on(",")
                 .omitEmptyStrings()
                 .trimResults()
                 .withKeyValueSeparator("=")
-                .split(request.getHeader("authorization"));
+                .split(request.getHeader("authorization").replaceFirst("OAuth ", ""));
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>" + oAuthHeader);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!" + oAuthHeader.get("oauth_consumer_key"));
