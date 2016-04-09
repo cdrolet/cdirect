@@ -85,22 +85,10 @@ public class Main {
             consumer.setSigningStrategy(new QueryStringSigningStrategy());
 
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
-            oauth.signpost.http.HttpRequest req = consumer.sign(redirect);
+            //consumer.sign(redirect);
 
             redirect.connect();
             System.out.println("!!!!!! Response: " + redirect.getResponseCode() + " "
-                    + redirect.getResponseMessage());
-        } catch (Exception ex) {
-            log.error("error occur ",ex);
-        }
-
-        try {
-            URL url = new URL(request.getRequestURL().toString());
-            HttpURLConnection redirect = (HttpURLConnection) url.openConnection();
-            oauth.signpost.http.HttpRequest req = consumer.sign(redirect);
-
-            redirect.connect();
-            System.out.println("xxxxxxxxx Response: " + redirect.getResponseCode() + " "
                     + redirect.getResponseMessage());
         } catch (Exception ex) {
             log.error("error occur ",ex);
