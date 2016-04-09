@@ -33,7 +33,13 @@ public class Main {
         return ResponseEntity.accepted().build();
     }
 
-/*
+    @RequestMapping(value = "/subscription/create/notification")
+    ResponseEntity createSubscribe() {
+
+        return ResponseEntity.accepted().build();
+    }
+
+    /*
     Subscription Create Notification URL
 
 https://cdirect.herokuapp.com/subscription/create/notification
