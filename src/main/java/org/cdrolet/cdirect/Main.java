@@ -29,22 +29,16 @@ public class Main {
         return "Hello";
     }
 
-
-    @RequestMapping(value = "/subscription/create2/notification")
-    ResponseEntity createSubscribe(@RequestParam Object url) {
-        System.out.println(">>>>>> " + url.toString());
-
-        return ResponseEntity.accepted().build();
-    }
-
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(HttpServletRequest request) {
-        System.out.println("******");
-        log.info("+++++++++++");
-
-        System.out.println(" ==> " + request.getRequestURL());
-        log.info(" ->> " + request.getRequestURL());
-
+        log.info(" ->> headers  :" + request.getHeaderNames());
+        log.info(" ->> query  :" + request.getQueryString());
+        log.info(" ->> url    :" + request.getRequestURL());
+        try {
+            log.info(" ->> parts    :" + request.getParts());
+        } catch(Exception ex) {
+            log.info("no parts");
+        }
 
         return ResponseEntity.accepted().build();
     }
