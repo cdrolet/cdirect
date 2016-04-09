@@ -1,5 +1,7 @@
 package org.cdrolet.cdirect;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +13,8 @@ import org.springframework.web.context.request.RequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 @RestController
@@ -31,7 +35,9 @@ public class Main {
 
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(HttpServletRequest request) {
-        log.info(" ->> headers  :" + request.getHeaderNames());
+
+        Collections.list(request.getHeaderNames())
+                .forEach(s -> log.info(s + " -> " + request.getHeader(s)));
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
         try {
