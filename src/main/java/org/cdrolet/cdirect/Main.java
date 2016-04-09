@@ -1,16 +1,20 @@
 package org.cdrolet.cdirect;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
+import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 
 @RestController
@@ -25,7 +30,6 @@ import java.util.Collections;
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
 public class Main {
-    OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
     }
@@ -62,14 +66,33 @@ public class Main {
         log.info(" ->> query  :" + request.getQueryString());
         log.info(" ->> url    :" + request.getRequestURL());
 
+        Map<String, String> oAuthHeader = Splitter.on(",")
+                .omitEmptyStrings()
+                .trimResults()
+                .withKeyValueSeparator("=")
+                .split(request.getHeader("authorization"));
+
+
+        OAuthConsumer consumer = new DefaultOAuthConsumer(
+                oAuthHeader.get("oauth_consumer_key"),
+                oAuthHeader.get("oauth_signature"));
+
         try {
-         HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
-         consumer.sign(redirect);
-         redirect.connect();
-        }catch (Exception ex) {
+
+            consumer.setSigningStrategy(new QueryStringSigningStrategy());
+
+
+            HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
+            oauth.signpost.http.HttpRequest req = consumer.sign(redirect);
+
+            redirect.connect();
+            System.out.println("!!!!!! Response: " + redirect.getResponseCode() + " "
+                    + redirect.getResponseMessage());
+        } catch (Exception ex) {
             log.error("error occur ",ex);
         }
 
+        //401 or 403
         return ResponseEntity.accepted().build();
     }
 
