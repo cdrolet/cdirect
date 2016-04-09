@@ -25,7 +25,7 @@ public class Main {
         return "Hello";
     }
 
-    @RequestMapping(value = "/v1")
+    @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(@RequestParam String url) {
 
         return ResponseEntity.accepted().build();
