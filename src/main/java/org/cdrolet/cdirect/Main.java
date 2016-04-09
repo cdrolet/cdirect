@@ -3,13 +3,18 @@ package org.cdrolet.cdirect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URL;
 
 
 @RestController
-@EnableAutoConfiguration
-@RequestMapping(value = "/cdirect", produces = "application/json")
+@SpringBootApplication
+@RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
 public class Main {
 
@@ -20,9 +25,42 @@ public class Main {
     @RequestMapping(produces = "text/plain")
     String getHello() {
 
-        return "Hello World";
-
+        return "Hello";
     }
+
+    @RequestMapping(value = "/v1")
+    ResponseEntity createSubscribe(@RequestParam String url) {
+
+        return ResponseEntity.accepted().build();
+    }
+
+/*
+    Subscription Create Notification URL
+
+https://cdirect.herokuapp.com/subscription/create/notification
+
+This is an interactive endpoint
+ Collect During Checkout
+Subscription Change Notification URL
+
+https://cdirect.herokuapp.com/subscription/change/notification
+
+Additional product settings required during checkout
+Subscription Cancel Notification URL
+
+https://cdirect.herokuapp.com/subscription/cancel/notification
+Subscription Status Notification URL
+
+https://cdirect.herokuapp.com/subscription/status/notification
+
+Enable upcoming invoice notification
+
+cdirect-103155
+OAuth Consumer Secret
+MLnebYpj6xwNIhZj
+
+*/
+
 /*
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
     @RequestMapping(method = RequestMethod.POST, value = "/**")
