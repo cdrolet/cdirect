@@ -27,11 +27,13 @@ public class Main {
         return "Hello";
     }
 
+/*
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(@RequestParam URL url) {
 
         return ResponseEntity.accepted().build();
     }
+*/
 
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe() {
