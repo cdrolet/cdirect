@@ -86,6 +86,7 @@ public class Main {
 
         try {
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
+            consumer.setSigningStrategy(new QueryStringSigningStrategy());
             consumer.sign(redirect);
 
             redirect.connect();
