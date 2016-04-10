@@ -7,8 +7,10 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.cdrolet.cdirect.domain.EventDetail;
+import org.cdrolet.cdirect.domain.EventResult;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -110,9 +112,16 @@ public class Main {
 
         EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
 
+        EventResult result = new EventResult();
+        result.setSuccess(true);
+        result.setAccountIdentifier("bob");
+
         System.out.println("!!!!!! Detail: " + event);
         //401 or 403
-        return ResponseEntity.accepted().build();
+        return ResponseEntity
+                .accepted()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(result);
     }
 
     /*
