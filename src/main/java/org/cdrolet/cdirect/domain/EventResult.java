@@ -10,4 +10,5 @@ public class EventResult implements Serializable {
 
     private boolean success;
     private String accountIdentifier;
+    private String errorCode;
 }
