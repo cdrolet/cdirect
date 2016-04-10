@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -33,6 +35,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
     }
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @RequestMapping(produces = "text/plain")
     String getHello() {
@@ -81,15 +85,26 @@ public class Main {
                 oAuthHeader.get("oauth_signature"));
 
         try {
-
-            consumer.setSigningStrategy(new QueryStringSigningStrategy());
-
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
             consumer.sign(redirect);
 
             redirect.connect();
-            System.out.println("!!!!!! Response: " + redirect.getResponseCode() + " - "
-                    + redirect.getResponseMessage() + redirect.getContent());
+            System.out.println("!!!!!! Response: " + redirect.getResponseCode() +
+                    redirect.getResponseMessage());
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(redirect.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            //print result
+            System.out.println("=======> " + response.toString());
+
         } catch (Exception ex) {
             log.error("error occur ",ex);
         }
