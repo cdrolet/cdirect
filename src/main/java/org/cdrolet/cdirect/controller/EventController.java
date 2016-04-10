@@ -1,14 +1,17 @@
 package org.cdrolet.cdirect.controller;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
+import org.cdrolet.cdirect.domain.ErrorCode;
 import org.cdrolet.cdirect.domain.EventDetail;
 import org.cdrolet.cdirect.domain.EventResult;
+import org.cdrolet.cdirect.domain.Subscriber;
+import org.cdrolet.cdirect.service.SubscriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +34,9 @@ import java.util.Map;
 @Slf4j
 public class EventController {
 
-    Map<String, String> subscriptions = Maps.newHashMap();
+    //TODO to be moved in the EventService
+    @Autowired
+    private SubscriptionService subService;
 
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(
@@ -57,7 +62,9 @@ public class EventController {
         OAuthConsumer consumer = new DefaultOAuthConsumer(
                 oAuthHeader.get("oauth_consumer_key"),
                 oAuthHeader.get("oauth_signature"));
+
         consumer.setSigningStrategy(new QueryStringSigningStrategy());
+
         StringBuffer response = new StringBuffer();
         try {
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
@@ -67,6 +74,16 @@ public class EventController {
             consumer.sign(redirect);
 
             redirect.connect();
+
+            //TODO check status returned when not authorized
+            if (redirect.getResponseCode() != 200) {
+                return ResponseEntity
+                        .status(401)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(ErrorCode.INVALID_RESPONSE.toResult());
+
+            }
+
             System.out.println("!!!!!! Response: " + redirect.getResponseCode() +
                     redirect.getResponseMessage());
 
@@ -86,16 +103,29 @@ public class EventController {
 
         EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
 
-        EventResult result = new EventResult();
-        result.setSuccess(true);
-        result.setAccountIdentifier("bob");
+        if (subService.isSubscriptionExist(event.getCreator().getEmail())) {
+            return ResponseEntity
+                    .status(409)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ErrorCode.USER_ALREADY_EXISTS.toResult());
+        }
 
-        System.out.println("!!!!!! Detail: " + event);
-        //401 or 403
+        Subscriber sub = new Subscriber();
+        sub.setEmail(event.getCreator().getEmail());
+        sub.setFirstName(event.getCreator().getFirstName());
+        sub.setLastName(event.getCreator().getLastName());
+        subService.addSubscription(sub);
+
+
+       //401 or 403
         return ResponseEntity
                 .accepted()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(result);
+                .body(EventResult
+                        .builder()
+                        .accountIdentifier(String.valueOf(sub.hashCode()))
+                        .success(true)
+                        .build());
     }
 
 

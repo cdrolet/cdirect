@@ -12,7 +12,6 @@ import java.util.HashMap;
 public class EventPayload implements Serializable {
 	private static final long serialVersionUID = 3080925569209286979L;
 
-	private EventCreator user;
 	private Company company;
 	private Order order;
 	private HashMap<String, String> configuration = new HashMap<>();
