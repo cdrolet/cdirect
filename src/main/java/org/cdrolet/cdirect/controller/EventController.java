@@ -1,6 +1,7 @@
-package org.cdrolet.cdirect;
+package org.cdrolet.cdirect.controller;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
@@ -8,14 +9,11 @@ import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.cdrolet.cdirect.domain.EventDetail;
 import org.cdrolet.cdirect.domain.EventResult;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -25,39 +23,15 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
-
+/**
+ * Created by root on 4/10/16.
+ */
 @RestController
-@SpringBootApplication
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
-public class Main {
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(Main.class, args);
-    }
+public class EventController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @RequestMapping(produces = "text/plain")
-    String getHello() {
-
-        return "Hello";
-    }
-
- /*   @RequestMapping(value = "/login")
-    ResponseEntity login(@RequestParam URL openIdUrl, HttpServletRequest request) {
-        Collections.list(request.getHeaderNames())
-                .forEach(s -> log.info(s + " -** " + request.getHeader(s)));
-        log.info(" -** query  :" + request.getQueryString());
-        log.info(" -** url    :" + request.getRequestURL());
-
-        OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
-        URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
-        HttpURLConnection request = (HttpURLConnection) url.openConnection();
-        consumer.sign(request);
-        request.connect();
-
-    }
-*/
+    Map<String, String> subscriptions = Maps.newHashMap();
 
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(
@@ -123,6 +97,24 @@ public class Main {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(result);
     }
+
+
+  /*   @RequestMapping(value = "/login")
+    ResponseEntity login(@RequestParam URL openIdUrl, HttpServletRequest request) {
+        Collections.list(request.getHeaderNames())
+                .forEach(s -> log.info(s + " -** " + request.getHeader(s)));
+        log.info(" -** query  :" + request.getQueryString());
+        log.info(" -** url    :" + request.getRequestURL());
+
+        OAuthConsumer consumer = new DefaultOAuthConsumer("Dummy", "secret");
+        URL url = new URL("https://www.appdirect.com/api/events/dummyChange");
+        HttpURLConnection request = (HttpURLConnection) url.openConnection();
+        consumer.sign(request);
+        request.connect();
+
+    }
+*/
+
 
     /*
     Subscription Create Notification URL
