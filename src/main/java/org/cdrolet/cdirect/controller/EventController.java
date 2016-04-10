@@ -104,6 +104,8 @@ public class EventController {
         EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
 
         if (subService.isSubscriptionExist(event.getCreator().getEmail())) {
+            System.out.println("!!!!! " + ErrorCode.USER_ALREADY_EXISTS.toResult());
+
             return ResponseEntity
                     .status(409)
                     .contentType(MediaType.APPLICATION_JSON)
