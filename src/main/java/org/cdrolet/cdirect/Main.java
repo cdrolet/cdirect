@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
+import org.cdrolet.cdirect.domain.EventDetail;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpRequest;
@@ -59,6 +60,7 @@ public class Main {
 
     }
 */
+
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(
             @RequestParam(value = "eventUrl", required = false) URL eventUrl,
@@ -83,19 +85,22 @@ public class Main {
         OAuthConsumer consumer = new DefaultOAuthConsumer(
                 oAuthHeader.get("oauth_consumer_key"),
                 oAuthHeader.get("oauth_signature"));
-
+        consumer.setSigningStrategy(new QueryStringSigningStrategy());
+        EventDetail detail = new EventDetail();
         try {
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
 
             redirect.setRequestProperty("accept", "application/json");
-            consumer.setSigningStrategy(new QueryStringSigningStrategy());
+
             consumer.sign(redirect);
 
             redirect.connect();
             System.out.println("!!!!!! Response: " + redirect.getResponseCode() +
                     redirect.getResponseMessage());
 
-            BufferedReader in = new BufferedReader(
+            detail = (EventDetail) redirect.getContent(new Class[]{EventDetail.class});
+
+ /*           BufferedReader in = new BufferedReader(
                     new InputStreamReader(redirect.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -104,14 +109,14 @@ public class Main {
                 response.append(inputLine);
             }
             in.close();
-
+*/
             //print result
-            System.out.println("=======> " + response.toString());
+//            System.out.println("=======> " + response.toString());
 
         } catch (Exception ex) {
             log.error("error occur ",ex);
         }
-
+        System.out.println("!!!!!! Detail: " + detail);
         //401 or 403
         return ResponseEntity.accepted().build();
     }
