@@ -114,6 +114,7 @@ public class EventController {
         sub.setEmail(event.getCreator().getEmail());
         sub.setFirstName(event.getCreator().getFirstName());
         sub.setLastName(event.getCreator().getLastName());
+        sub.setEditionCode(event.getPayload().getOrder().getEditionCode());
         subService.addSubscription(sub);
 
 
