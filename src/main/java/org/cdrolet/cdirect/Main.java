@@ -1,8 +1,7 @@
 package org.cdrolet.cdirect;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -10,20 +9,17 @@ import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.cdrolet.cdirect.domain.EventDetail;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -86,7 +82,7 @@ public class Main {
                 oAuthHeader.get("oauth_consumer_key"),
                 oAuthHeader.get("oauth_signature"));
         consumer.setSigningStrategy(new QueryStringSigningStrategy());
-        EventDetail detail = new EventDetail();
+        StringBuffer response = new StringBuffer();
         try {
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
 
@@ -98,25 +94,23 @@ public class Main {
             System.out.println("!!!!!! Response: " + redirect.getResponseCode() +
                     redirect.getResponseMessage());
 
-            detail = (EventDetail) redirect.getContent(new Class[]{EventDetail.class});
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(redirect.getInputStream()))) {
+                String inputLine;
+                response = new StringBuffer();
 
- /*           BufferedReader in = new BufferedReader(
-                    new InputStreamReader(redirect.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                //print result
+                System.out.println("=======> " + response.toString());
             }
-            in.close();
-*/
-            //print result
-//            System.out.println("=======> " + response.toString());
-
         } catch (Exception ex) {
-            log.error("error occur ",ex);
+            log.error("error occur ", ex);
         }
-        System.out.println("!!!!!! Detail: " + detail);
+
+        EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
+
+        System.out.println("!!!!!! Detail: " + event);
         //401 or 403
         return ResponseEntity.accepted().build();
     }
