@@ -86,6 +86,8 @@ public class Main {
 
         try {
             HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
+
+            redirect.setRequestProperty("accept", "application/json");
             consumer.setSigningStrategy(new QueryStringSigningStrategy());
             consumer.sign(redirect);
 
