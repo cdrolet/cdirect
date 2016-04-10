@@ -88,8 +88,8 @@ public class Main {
             //consumer.sign(redirect);
 
             redirect.connect();
-            System.out.println("!!!!!! Response: " + redirect.getResponseCode() + " "
-                    + redirect.getResponseMessage());
+            System.out.println("!!!!!! Response: " + redirect.getResponseCode() + " - "
+                    + redirect.getResponseMessage() + redirect.getContent());
         } catch (Exception ex) {
             log.error("error occur ",ex);
         }
