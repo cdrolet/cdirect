@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Created by root on 4/10/16.
@@ -24,10 +26,15 @@ public class FrontController {
 
     @RequestMapping("/")
     public String welcome(@ModelAttribute("model") ModelMap model) {
+
         model.addAttribute("subscriberList",
                 subscriptionService.getAllSubscriptions());
+
         model.addAttribute("requestList",
-                eventService.getAllRequestLogs());
+                eventService.getAllRequestLogs().stream()
+                        .limit(6)
+                        .collect(Collectors.toList()));
+
         return "index";
     }
 

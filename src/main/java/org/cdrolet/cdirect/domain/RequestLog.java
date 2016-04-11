@@ -10,9 +10,9 @@ public class RequestLog {
 
     @RequiredArgsConstructor
     public enum Status {
-        OPENING("warning"),
-        PROCESSING("warning"),
-        COMPLETED("success"),
+        OPENING("success"),
+        PROCESSING("success"),
+        COMPLETED("active"),
         REJECTED("danger");
 
         private final String displayClass;

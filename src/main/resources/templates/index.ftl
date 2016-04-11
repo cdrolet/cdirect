@@ -59,6 +59,9 @@
     </div>
 </div>
 <div class="container">
+  <div class="alert alert-info text-center" role="alert">
+  BlaBlaBla
+  </div>
   <div class="row">
     <div class="col-md-6">
       <h4><span class="glyphicon glyphicon-info-sign"></span> How tho run this application</h3>
@@ -69,9 +72,7 @@
         <li>java -jar cdirect-1.2.jar</li>      </ul>
     </div>
   </div>
-  <div class="alert alert-info text-center" role="alert">
-  BlaBlaBla
-  </div>
+
 </div>
 
 
