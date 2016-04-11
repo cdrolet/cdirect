@@ -55,7 +55,7 @@ public class NotificationController {
                 .omitEmptyStrings()
                 .trimResults()
                 .withKeyValueSeparator("=")
-                .split(request.getHeader("authorization").replaceFirst("OAuth ", ""));
+                .split(request.getHeader("authorization").replaceFirst("OAuth ", "").replaceAll("\"", ""));
 
         RequestLog requestLog = new RequestLog(Long.valueOf(oAuthHeader.get("oauth_timestamp")), EventType.SUBSCRIPTION_ORDER);
         eventService.addRequestLog(requestLog);
