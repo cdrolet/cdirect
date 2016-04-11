@@ -1,11 +1,13 @@
 package org.cdrolet.cdirect.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
  * Created by root on 4/10/16.
  */
 @RequiredArgsConstructor
+@Getter
 public enum ErrorCode {
 
     USER_ALREADY_EXISTS("user already existing on CDirect"),

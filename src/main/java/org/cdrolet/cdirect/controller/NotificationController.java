@@ -2,14 +2,13 @@ package org.cdrolet.cdirect.controller;
 
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
-import org.cdrolet.cdirect.domain.ErrorCode;
-import org.cdrolet.cdirect.domain.EventDetail;
-import org.cdrolet.cdirect.domain.EventResult;
-import org.cdrolet.cdirect.domain.Subscriber;
+import org.cdrolet.cdirect.domain.*;
+import org.cdrolet.cdirect.service.EventService;
 import org.cdrolet.cdirect.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,11 +32,13 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
-public class EventController {
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
+public class NotificationController {
 
     //TODO to be moved in the EventService
-    @Autowired
-    private SubscriptionService subService;
+    private final SubscriptionService subService;
+
+    private final EventService eventService;
 
     @RequestMapping(value = "/subscription/create/notification")
     ResponseEntity createSubscribe(
@@ -54,6 +56,10 @@ public class EventController {
                 .trimResults()
                 .withKeyValueSeparator("=")
                 .split(request.getHeader("authorization").replaceFirst("OAuth ", ""));
+
+        RequestLog requestLog = new RequestLog(Long.valueOf(oAuthHeader.get("oauth_timestamp")), EventType.SUBSCRIPTION_ORDER);
+        eventService.addRequestLog(requestLog);
+
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>" + oAuthHeader);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!" + oAuthHeader.get("oauth_consumer_key"));
@@ -77,6 +83,11 @@ public class EventController {
 
             //TODO check status returned when not authorized
             if (redirect.getResponseCode() != 200) {
+
+                requestLog.setStatus(RequestLog.Status.REJECTED);
+                requestLog.setMessage("unable to sign the event");
+                eventService.addRequestLog(requestLog);
+
                 return ResponseEntity
                         .status(401)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,12 +110,24 @@ public class EventController {
             }
         } catch (Exception ex) {
             log.error("error occur ", ex);
+            return ResponseEntity
+                    .status(401)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ErrorCode.UNKNOWN_ERROR.toResult());
+
         }
 
         EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
+        requestLog.setStatus(RequestLog.Status.PROCESSING);
+        requestLog.setEvent(event);
+        eventService.addRequestLog(requestLog);
 
         if (subService.isSubscriptionExist(event.getCreator().getEmail())) {
             System.out.println("!!!!! " + ErrorCode.USER_ALREADY_EXISTS.toResult());
+
+            requestLog.setStatus(RequestLog.Status.REJECTED);
+            requestLog.setMessage(ErrorCode.USER_ALREADY_EXISTS.getMessage());
+            eventService.addRequestLog(requestLog);
 
             return ResponseEntity
                     .status(409)
@@ -112,13 +135,17 @@ public class EventController {
                     .body(ErrorCode.USER_ALREADY_EXISTS.toResult());
         }
 
-        Subscriber sub = new Subscriber();
-        sub.setEmail(event.getCreator().getEmail());
-        sub.setFirstName(event.getCreator().getFirstName());
-        sub.setLastName(event.getCreator().getLastName());
-        sub.setEditionCode(event.getPayload().getOrder().getEditionCode());
+        Subscriber sub = Subscriber.builder()
+                .email(event.getCreator().getEmail())
+                .firstName(event.getCreator().getFirstName())
+                .lastName(event.getCreator().getLastName())
+                .editionCode(event.getPayload().getOrder().getEditionCode())
+                .build();
+
         subService.addSubscription(sub);
 
+        requestLog.setStatus(RequestLog.Status.COMPLETED);
+        eventService.addRequestLog(requestLog);
 
        //401 or 403
         return ResponseEntity

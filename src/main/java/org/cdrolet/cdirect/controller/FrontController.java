@@ -1,6 +1,7 @@
 package org.cdrolet.cdirect.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.cdrolet.cdirect.service.EventService;
 import org.cdrolet.cdirect.service.SubscriptionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,10 +20,14 @@ public class FrontController {
 
     private final SubscriptionService subscriptionService;
 
+    private final EventService eventService;
+
     @RequestMapping("/")
     public String welcome(@ModelAttribute("model") ModelMap model) {
         model.addAttribute("subscriberList",
                 subscriptionService.getAllSubscriptions());
+        model.addAttribute("requestList",
+                eventService.getAllRequestLogs());
         return "index";
     }
 
