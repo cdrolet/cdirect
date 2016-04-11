@@ -25,3 +25,7 @@
     .jumbotron .logo img {
       max-width: 100%; }
 
+.terminal {
+  background: black;
+  color: white;
+}

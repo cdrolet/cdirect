@@ -16,7 +16,7 @@
     <h1>Welcome to <font color="#e60000">C</font>DIRECT</h1>
     <p>A sample Java application based on the AppDirect platform.</p>
     <a type="button" class="btn btn-lg btn-primary" href="https://github.com/cdrolet/cdirect"><span class="glyphicon glyphicon-download"></span> Source on GitHub</a>
-    <a type="button" class="btn btn-lg btn-default" href="https://docs.appdirect.com/developer/distribution/distribution-getting-started-guide"><span class="glyphicon glyphicon-flash"></span> Getting Started with AppDirect</a>
+    <a type="button" class="btn btn-lg btn-default" href="https://www.appdirect.com/cms/editApp/103155?1484043770#test-integration"><span class="glyphicon glyphicon-flash"></span> Ping Test</a>
   </div>
 </div>
 
@@ -49,7 +49,7 @@
                 <th>Message</th>
             </tr>
             <#list model["requestList"] as request>
-                <tr class=${request.displayClass}>
+                <tr class="${request.displayClass}">
                     <td>${request.type}</td>
                     <td>${request.status}</td>
                     <td>${request.message}</td>
@@ -59,19 +59,16 @@
     </div>
 </div>
 <div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h4><span class="glyphicon glyphicon-info-sign"></span> How tho run this application</h3>
-      <ul>
-        <li>git clone git@github.com:cdrolet/cdirect.git</li>
-        <li>cd cdirect</li>
-        <li>mvn install</li>
-        <li>java -jar cdirect-1.2.jar</li>      </ul>
-    </div>
-  </div>
   <div class="alert alert-info text-center" role="alert">
   BlaBlaBla
   </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h4><span class="glyphicon glyphicon-info-sign"></span> How tho run this application</h3>
+        <pre class="terminal">git clone git@github.com:cdrolet/cdirect.git<br>cd cdirect<br>mvn install<br>java -jar target/cdirect-1.2.jar</pre>
+    </div>
+  </div>
+
 </div>
 
 
