@@ -49,7 +49,7 @@
                 <th>Message</th>
             </tr>
             <#list model["requestList"] as request>
-                <tr class=${request.displayClass}>
+                <tr class="${request.displayClass}">
                     <td>${request.type}</td>
                     <td>${request.status}</td>
                     <td>${request.message}</td>

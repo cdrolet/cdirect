@@ -28,7 +28,7 @@ public class RequestLog {
 
     private EventDetail event;
 
-    private String getDisplayClass() {
+    public String getDisplayClass() {
         return status.displayClass;
     }
 }
