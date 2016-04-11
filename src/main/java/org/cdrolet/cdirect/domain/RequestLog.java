@@ -12,7 +12,7 @@ public class RequestLog {
     public enum Status {
         OPENING("success"),
         PROCESSING("success"),
-        COMPLETED("active"),
+        COMPLETED("info"),
         REJECTED("danger");
 
         private final String displayClass;
