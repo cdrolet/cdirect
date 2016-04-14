@@ -1,6 +1,5 @@
 package org.cdrolet.cdirect.controller;
 
-import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,14 +7,14 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.cdrolet.cdirect.domain.*;
-import org.cdrolet.cdirect.service.EventService;
+import org.cdrolet.cdirect.request.RequestUtil;
+import org.cdrolet.cdirect.service.EventAuthorizationService;
+import org.cdrolet.cdirect.service.NotificationLogService;
 import org.cdrolet.cdirect.service.SubscriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +22,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+
+import static org.cdrolet.cdirect.request.NotificationRequest.*;
+
 
 /**
  * Created by root on 4/10/16.
@@ -35,97 +37,37 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class NotificationController {
 
+
     //TODO to be moved in the EventService
     private final SubscriptionService subService;
 
-    private final EventService eventService;
+    private final NotificationLogService notificationLogService;
 
-    @RequestMapping(value = "/subscription/create/notification")
+    private final EventAuthorizationService authService;
+
+    @RequestMapping(value = "/subscription/create/" + NOTIFICATION_PATH)
     ResponseEntity createSubscribe(
-            @RequestParam(value = "eventUrl", required = false) URL eventUrl,
-            @RequestParam(value = "token", required = false) String token,
+            @RequestParam(value = "eventUrl") URL eventUrl,
+            @RequestParam(value = "token") String token,
             HttpServletRequest request) {
 
-        Collections.list(request.getHeaderNames())
-                .forEach(s -> log.info(s + " -> " + request.getHeader(s)));
-        log.info(" ->> query  :" + request.getQueryString());
-        log.info(" ->> url    :" + request.getRequestURL());
 
-        Map<String, String> oAuthHeader = Splitter.on(",")
-                .omitEmptyStrings()
-                .trimResults()
-                .withKeyValueSeparator("=")
-                .split(request.getHeader("authorization").replaceFirst("OAuth ", "").replaceAll("\"", ""));
+        String authHeaders = AuthHeader.normalizeHeaders(request.getHeader(AUTHORIZATION_HEADERS));
 
-        RequestLog requestLog = new RequestLog(Long.valueOf(oAuthHeader.get("oauth_timestamp")), EventType.SUBSCRIPTION_ORDER);
-        eventService.addRequestLog(requestLog);
+        Optional<EventDetail> eventDetail = authService.authorizeUrl(
+                RequestUtil.valuesToMap(authHeaders),
+                eventUrl);
 
-
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>" + oAuthHeader);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!" + oAuthHeader.get("oauth_consumer_key"));
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@" + oAuthHeader.get("oauth_signature"));
-
-        OAuthConsumer consumer = new DefaultOAuthConsumer(
-                oAuthHeader.get("oauth_consumer_key"),
-                oAuthHeader.get("oauth_signature"));
-
-        consumer.setSigningStrategy(new QueryStringSigningStrategy());
-
-        StringBuffer response = new StringBuffer();
-        try {
-            HttpURLConnection redirect = (HttpURLConnection) eventUrl.openConnection();
-
-            redirect.setRequestProperty("accept", "application/json");
-
-            consumer.sign(redirect);
-
-            redirect.connect();
-
-            //TODO check status returned when not authorized
-            if (redirect.getResponseCode() != 200) {
-
-                requestLog.setStatus(RequestLog.Status.REJECTED);
-                requestLog.setMessage("unable to sign the event");
-                eventService.addRequestLog(requestLog);
-
-                return ResponseEntity
-                        .status(401)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(ErrorCode.INVALID_RESPONSE.toResult());
-
-            }
-
-            System.out.println("!!!!!! Response: " + redirect.getResponseCode() +
-                    redirect.getResponseMessage());
-
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(redirect.getInputStream()))) {
-                String inputLine;
-                response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                //print result
-                System.out.println("=======> " + response.toString());
-            }
-        } catch (Exception ex) {
-            log.error("error occur ", ex);
+        if (!eventDetail.isPresent()) {
             return ResponseEntity
                     .status(401)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(ErrorCode.UNKNOWN_ERROR.toResult());
-
+                    .body(ErrorCode.FORBIDDEN.toResult());
         }
 
-        EventDetail event = new Gson().fromJson(response.toString(), EventDetail.class);
-        requestLog.setStatus(RequestLog.Status.PROCESSING);
-        requestLog.setEvent(event);
-        eventService.addRequestLog(requestLog);
+        if (subService.isSubscriptionExist(eventDetail.get().getCreator().getEmail())) {
 
-        if (subService.isSubscriptionExist(event.getCreator().getEmail())) {
-            System.out.println("!!!!! " + ErrorCode.USER_ALREADY_EXISTS.toResult());
-
-            requestLog.setStatus(RequestLog.Status.REJECTED);
+            requestLog.setStatus(NotificationLog.State.FAILED);
             requestLog.setMessage(ErrorCode.USER_ALREADY_EXISTS.getMessage());
             eventService.addRequestLog(requestLog);
 
@@ -144,10 +86,7 @@ public class NotificationController {
 
         subService.addSubscription(sub);
 
-        requestLog.setStatus(RequestLog.Status.COMPLETED);
-        eventService.addRequestLog(requestLog);
-
-       //401 or 403
+        //401 or 403
         return ResponseEntity
                 .accepted()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,6 +97,12 @@ public class NotificationController {
                         .build());
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.OK)
+    public Map<String, String> handleValidationException(ValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ex.toMap();
+    }
 
   /*   @RequestMapping(value = "/login")
     ResponseEntity login(@RequestParam URL openIdUrl, HttpServletRequest request) {
@@ -272,4 +217,6 @@ MLnebYpj6xwNIhZj
     }
 
 */
+
+
 }

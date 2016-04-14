@@ -13,28 +13,28 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class DynamoSubscriptionService implements SubscriptionService {
+public class MemorySubscriptionService implements SubscriptionService {
 
-    private Map<String, Subscriber> subscriptions = Maps.newHashMap();
+    private Map<String, Subscriber> inventory = Maps.newHashMap();
 
     @Override
     public boolean isSubscriptionExist(String email) {
-        return subscriptions.containsKey(email);
+        return inventory.containsKey(email);
     }
 
     @Override
     public void addSubscription(Subscriber subscriber) {
         log.info("Adding new subscriber: " + subscriber);
-        subscriptions.put(subscriber.getEmail(), subscriber);
+        inventory.put(subscriber.getEmail(), subscriber);
     }
 
     @Override
     public void removeSubscription(String email) {
-        subscriptions.remove(email);
+        inventory.remove(email);
     }
 
     @Override
     public Collection<Subscriber> getAllSubscriptions() {
-        return subscriptions.values();
+        return inventory.values();
     }
 }

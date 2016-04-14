@@ -51,7 +51,7 @@
             <#list model["requestList"] as request>
                 <tr class="${request.displayClass}">
                     <td>${request.type}</td>
-                    <td>${request.status}</td>
+                    <td>${request.state}</td>
                     <td>${request.message}</td>
                 </tr>
             </#list>

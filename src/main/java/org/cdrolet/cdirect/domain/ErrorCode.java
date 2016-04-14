@@ -15,7 +15,8 @@ public enum ErrorCode {
     ACCOUNT_NOT_FOUND("the account didn't exist"),
     INVALID_RESPONSE("An unexpected error occur when processing the event"),
     TRANSPORT_ERROR("An unexpected error occur when processing the event"),
-    UNKNOWN_ERROR("An unexpected error occur");
+    UNKNOWN_ERROR("An unexpected error occur"),
+    FORBIDDEN("The operation is not allowed.");
 
     private final String message;
 
