@@ -29,7 +29,7 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
 
         Order order = eventDetail.getPayload().getOrder();
         if (order != null) {
-            builder.pricingDuration(order.getPricingDuration());
+            builder.pricingDuration(order.getPricingDuration().name());
             builder.editionCode(order.getEditionCode());
         } else {
             builder.pricingDuration(previous.getPricingDuration());
