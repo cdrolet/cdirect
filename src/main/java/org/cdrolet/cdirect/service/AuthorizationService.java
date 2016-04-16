@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Created by c on 4/13/16.
  */
-public interface EventAuthorizationService {
+public interface AuthorizationService {
 
-    Optional<EventDetail> authorizeUrl(Map<String, String> authorizationInfo, URL eventUrl);
+    EventDetail authorizeUrl(Map<String, String> authorizationInfo, URL eventUrl);
 }

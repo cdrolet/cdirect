@@ -1,20 +1,18 @@
 package org.cdrolet.cdirect.service;
 
-import org.cdrolet.cdirect.domain.Subscriber;
+import org.cdrolet.cdirect.domain.EventDetail;
+import org.cdrolet.cdirect.domain.EventResult;
+import org.cdrolet.cdirect.entity.Subscription;
 
 import java.util.Collection;
 
 /**
- * Created by root on 4/10/16.
+ * Created by c on 4/14/16.
  */
 public interface SubscriptionService {
 
-    boolean isSubscriptionExist(String email);
+    EventResult processEvent(EventDetail event);
 
-    void addSubscription(Subscriber subscriber);
-
-    void removeSubscription(String email);
-
-    Collection<Subscriber> getAllSubscriptions();
+    Collection<Subscription> getAll();
 
 }

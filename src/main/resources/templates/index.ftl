@@ -21,42 +21,23 @@
 </div>
 
 <div class="container">
-  <hr>
-  <div class="row">
-    <div class="col-md-6">
-        <h3>Subscribers</h3>
-        <table class="table">
+     <h3>Subscribers</h3>
+    <table class="table">
+        <tr>
+            <th>Account ID</th>
+            <th>Edition Code</th>
+            <th>Pricing Duration</th>
+            <th>Active</th>
+        </tr>
+        <#list model["subscriberList"] as subscriber>
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Edition</th>
+                <td>${subscriber.accountIdentifier}</td>
+                <td>${subscriber.editionCode}</td>
+                <td>${subscriber.pricingDuration}</td>
+                <td>${subscriber.isActive}</td>
             </tr>
-            <#list model["subscriberList"] as subscriber>
-                <tr>
-                    <td>${subscriber.lastName}</td>
-                    <td>${subscriber.email}</td>
-                    <td>${subscriber.editionCode}</td>
-                </tr>
-            </#list>
-        </table>
-    </div>
-    <div class="col-md-6">
-        <h3>Requests</h3>
-        <table class="table">
-            <tr>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Message</th>
-            </tr>
-            <#list model["requestList"] as request>
-                <tr class="${request.displayClass}">
-                    <td>${request.type}</td>
-                    <td>${request.state}</td>
-                    <td>${request.message}</td>
-                </tr>
-            </#list>
-        </table>
-    </div>
+        </#list>
+    </table>
 </div>
 <div class="container">
   <div class="alert alert-info text-center" role="alert">

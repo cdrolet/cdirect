@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.domain.ErrorCode;
 import org.cdrolet.cdirect.domain.EventResult;
-import org.cdrolet.cdirect.domain.NotificationLog;
-import org.cdrolet.cdirect.service.NotificationLogService;
+import org.cdrolet.cdirect.request.NotificationRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -22,12 +21,8 @@ import static org.cdrolet.cdirect.request.NotificationRequest.*;
 /**
  * Created by c on 4/12/16.
  */
-@Component
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class PreNotificationInterceptor extends HandlerInterceptorAdapter implements NotificationInterceptor {
-
-    private final NotificationLogService notificationLogService;
+public class NotificationValidationInterceptor extends HandlerInterceptorAdapter {
 
     @Value("${auth.key}")
     private String key;
@@ -43,28 +38,15 @@ public class PreNotificationInterceptor extends HandlerInterceptorAdapter implem
             return false;
         }
 
-        if (!checkQueryParamsAreValid(request, response)) {
-            return false;
-        }
-
         if (!checkIfAuthorized(request, response)) {
             return false;
         }
 
-        addSuccessfulRequestLog(request);
-
         return true;
     }
 
-    private void addSuccessfulRequestLog(HttpServletRequest request) {
-        String timestamp = AuthHeader.AUTH_TIMESTAMP.from(request.getHeader(AUTHORIZATION_HEADERS)).get();
-
-        notificationLogService.addRequestLog(NotificationLog.builder()
-                .timestamp(Long.valueOf(timestamp))
-                .state(NotificationLog.State.RECEIVED)
-                .status(NotificationLog.Status.OK)
-                .message("pre handling the request")
-                .build());
+    boolean isNotificationApiRequest(HttpServletRequest request) {
+        return request.getRequestURL().toString().endsWith(NotificationRequest.NOTIFICATION_PATH);
     }
 
     private boolean checkAuthHeaderAreValid(HttpServletRequest request, HttpServletResponse response) {
@@ -95,26 +77,12 @@ public class PreNotificationInterceptor extends HandlerInterceptorAdapter implem
         return true;
     }
 
-    private boolean checkQueryParamsAreValid(HttpServletRequest request, HttpServletResponse response) {
-
-        String params = request.getQueryString();
-
-        for (QueryParam param : QueryParam.values()) {
-            if (!param.from(params).isPresent()) {
-                handleBadRequest(response, param.getErrorMessage());
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private boolean checkIfAuthorized(HttpServletRequest request, HttpServletResponse response) {
 
         String submittedKey = AuthHeader.AUTH_KEY.from(request.getHeader(AUTHORIZATION_HEADERS)).get();
 
         if (submittedKey.equals(key)) {
-            handleUnauthorizedRequest(response, "wrong key");
+            handleUnauthorizedRequest(response, "invalid signature");
             return false;
         }
 
@@ -125,16 +93,12 @@ public class PreNotificationInterceptor extends HandlerInterceptorAdapter implem
 
         log.warn(errorMessage);
 
-        notificationLogService.addRequestLog(NotificationLog.failed(errorMessage));
-
         response.setStatus(400);
         response.setContentType("application/json");
         try {
             new Gson().toJson(
                     EventResult
                             .builder()
-                            .errorCode(ErrorCode.FORBIDDEN.name())
-                            .success(false)
                             .message(errorMessage)
                             .build(),
                     response.getWriter());
@@ -148,16 +112,12 @@ public class PreNotificationInterceptor extends HandlerInterceptorAdapter implem
 
         log.warn(errorMessage);
 
-        notificationLogService.addRequestLog(NotificationLog.failed(errorMessage));
-
-        response.setStatus(403);
+        response.setStatus(401);
         response.setContentType("application/json");
         try {
             new Gson().toJson(
                     EventResult
                             .builder()
-                            .errorCode(ErrorCode.FORBIDDEN.name())
-                            .success(false)
                             .message(errorMessage)
                             .build(),
                     response.getWriter());
