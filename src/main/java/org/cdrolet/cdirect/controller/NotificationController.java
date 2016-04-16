@@ -60,13 +60,13 @@ public class NotificationController {
     @ResponseStatus(value = HttpStatus.OK)
     public EventResult handleBusinessException(ProcessException ex) {
         log.info("returning business error: " + ex.getErrorCode().toResult());
-        return ex.getErrorCode().toResult();
+        return ex.getErrorCode().toResult(ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public EventResult handleUnauthorizedException(UnauthorizedException ex) {
-        return ErrorCode.FORBIDDEN.toResult();
+        return ErrorCode.FORBIDDEN.toResult(ex.getMessage());
     }
 
 }
