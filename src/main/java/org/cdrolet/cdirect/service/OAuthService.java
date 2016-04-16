@@ -1,5 +1,6 @@
 package org.cdrolet.cdirect.service;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -50,7 +51,7 @@ public class OAuthService implements AuthorizationService {
 
         System.out.println(">>>> response: " + response);
 
-        return RequestUtil.fromJson(response, EventDetail.class);
+        return new Gson().fromJson(response, EventDetail.class);
     }
 
     private String parseResponse(HttpURLConnection connection) {
