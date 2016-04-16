@@ -15,9 +15,14 @@ public class RequestUtil {
 
     public static final Gson JsonParser = new Gson();
 
-    public static <T> T fromJson(String json, Class<T> classOfT) throws JsonSyntaxException {
+    public static <T> T fromJson(String json, Class<T> classOfT) {
 
-        return JsonParser.fromJson(json, classOfT);
+        try {
+            return JsonParser.fromJson(json, classOfT);
+        } catch (Exception ex) {
+            System.out.println(">>>>>> " + ex);
+            return null;
+        }
 
     }
 
