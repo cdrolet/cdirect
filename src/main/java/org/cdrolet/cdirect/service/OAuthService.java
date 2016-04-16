@@ -51,9 +51,8 @@ public class OAuthService implements AuthorizationService {
 
         System.out.println(">>>> response: " + response);
 
-        EventDetail detail = RequestUtil.fromJson(response, EventDetail.class);
-
-        return detail;
+        Gson gson = new Gson();
+        return gson.fromJson(response, EventDetail.class);
     }
 
     private String parseResponse(HttpURLConnection connection) {
