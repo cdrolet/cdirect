@@ -52,7 +52,10 @@ public class OAuthService implements AuthorizationService {
         System.out.println(">>>> response: " + response);
 
         Gson gson = new Gson();
-        return gson.fromJson(response, EventDetail.class);
+        EventDetail detail = gson.fromJson(response, EventDetail.class);
+
+        System.out.println("======> " + detail);
+        return detail;
     }
 
     private String parseResponse(HttpURLConnection connection) {
