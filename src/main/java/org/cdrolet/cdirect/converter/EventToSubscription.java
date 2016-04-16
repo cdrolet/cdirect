@@ -36,6 +36,7 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
             builder.editionCode(previous.getEditionCode());
         }
 
+/*
         Notice notice = eventDetail.getPayload().getNotice();
         if (notice != null) {
             switch(notice.getType()) {
@@ -53,6 +54,7 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
             }
 
         }
+*/
 
         return builder.build();
     }
