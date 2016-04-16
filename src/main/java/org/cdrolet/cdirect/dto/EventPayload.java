@@ -12,6 +12,6 @@ public class EventPayload implements Serializable {
 	private Company company;
 	private Account account;
 	private Order order;
-	private Notice notice;
+//	private Notice notice;
 	private HashMap<String, String> configuration = new HashMap<>();
 }
