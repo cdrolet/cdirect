@@ -36,7 +36,7 @@ public class SubscriptionController {
 
     private final AuthorizationService authService;
 
-    @RequestMapping(value = "/subscription/**/" + NOTIFICATION_PATH)
+    @RequestMapping(value = "/subscription/ "+ NOTIFICATION_PATH)
     ResponseEntity handleSubscriptionEvent(
             @RequestParam(value = "eventUrl") URL eventUrl,
             HttpServletRequest request) {

@@ -3,17 +3,11 @@ org/cdrolet/cdirect/domain/EventType.class
 org/cdrolet/cdirect/domain/PricingDuration.class
 org/cdrolet/cdirect/domain/Order.class
 org/cdrolet/cdirect/domain/EventCreator.class
-org/cdrolet/cdirect/domain/RequestLog$Status.class
 org/cdrolet/cdirect/domain/EventPayload.class
-org/cdrolet/cdirect/service/EventService.class
-org/cdrolet/cdirect/service/DynamoEventService.class
 org/cdrolet/cdirect/domain/EventResult.class
-org/cdrolet/cdirect/controller/NotificationController.class
 org/cdrolet/cdirect/domain/Item.class
 org/cdrolet/cdirect/domain/EventDetail.class
 org/cdrolet/cdirect/domain/MarketPlace.class
 org/cdrolet/cdirect/Application.class
 org/cdrolet/cdirect/domain/UsageUnit.class
-org/cdrolet/cdirect/domain/Subscriber$SubscriberBuilder.class
 org/cdrolet/cdirect/domain/EventFlag.class
-org/cdrolet/cdirect/domain/RequestLog.class

@@ -44,14 +44,4 @@ public final class NotificationRequest {
         }
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    public enum QueryParam implements RequestField {
- //       TOKEN("token"),
-        EVENT_URL("eventUrl");
-
-        private final String field;
-    }
-
-
 }

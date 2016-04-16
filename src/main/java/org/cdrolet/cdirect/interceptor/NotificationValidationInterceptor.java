@@ -81,8 +81,8 @@ public class NotificationValidationInterceptor extends HandlerInterceptorAdapter
 
         String submittedKey = AuthHeader.AUTH_KEY.from(request.getHeader(AUTHORIZATION_HEADERS)).get();
 
-        if (submittedKey.equals(key)) {
-            handleUnauthorizedRequest(response, "invalid signature");
+        if (!submittedKey.equals(key)) {
+            handleUnauthorizedRequest(response, "invalid signature: " + submittedKey);
             return false;
         }
 
