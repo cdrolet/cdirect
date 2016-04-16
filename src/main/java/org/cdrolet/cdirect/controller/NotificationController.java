@@ -25,7 +25,7 @@ import static org.cdrolet.cdirect.request.NotificationRequest.*;
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class SubscriptionController {
+public class NotificationController {
 
 
     private final SubscriptionService notificationService;
@@ -40,6 +40,8 @@ public class SubscriptionController {
         EventDetail eventDetail = signedFetch(request, eventUrl);
 
         EventResult result = notificationService.processEvent(eventDetail);
+
+        log.info("returning " + result);
 
         return ResponseEntity
                 .accepted()
@@ -57,14 +59,13 @@ public class SubscriptionController {
     @ExceptionHandler(ProcessException.class)
     @ResponseStatus(value = HttpStatus.OK)
     public EventResult handleBusinessException(ProcessException ex) {
-
+        log.info("returning business error: " + ex.getErrorCode().toResult()));
         return ex.getErrorCode().toResult();
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public EventResult handleUnauthorizedException(UnauthorizedException ex) {
-
         return ErrorCode.FORBIDDEN.toResult();
     }
 

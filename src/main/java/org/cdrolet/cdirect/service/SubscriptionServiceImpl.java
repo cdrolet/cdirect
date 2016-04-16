@@ -79,11 +79,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Account account = event.getPayload().getAccount();
 
-        checkNotNull(account, "missing account in payload");
+        checkNotNull(account, ErrorCode.UNKNOWN_ERROR, "missing account in payload");
 
         Subscription subscription = inventory.get(account.getAccountIdentifier());
 
-        checkNotNull(subscription, "account identifier: " + account.getAccountIdentifier() + " not found");
+        checkNotNull(subscription, ErrorCode.ACCOUNT_NOT_FOUND, "account identifier: " + account.getAccountIdentifier() + " not found");
 
         return subscription;
     }
@@ -94,7 +94,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Notice notice = null;//event.getPayload().getNotice();
 
-        checkNotNull(notice, "missing notice");
+        checkNotNull(notice, ErrorCode.UNKNOWN_ERROR, "missing notice");
 
         if (notice.getType().equals(NoticeType.CLOSED)) {
             return inventory.remove(previous.getAccountIdentifier());
@@ -112,11 +112,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return subscription;
     }
 
-    private <T> void checkNotNull(T target, String message) {
+    private <T> void checkNotNull(T target, ErrorCode code, String message) {
 
         if (target == null) {
             log.error(message);
-            throw new ProcessException(message, ErrorCode.UNKNOWN_ERROR);
+            throw new ProcessException(message, code);
         }
     }
 
