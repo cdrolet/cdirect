@@ -13,7 +13,7 @@ public class Subscription {
 
     private String accountIdentifier;
 
-    private boolean isActive;
+    private boolean active;
 
     private String editionCode;
 
