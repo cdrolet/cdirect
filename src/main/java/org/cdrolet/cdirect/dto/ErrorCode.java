@@ -22,8 +22,13 @@ public enum ErrorCode {
 
     public EventResult toResult() {
 
+        return toResult(message);
+    }
+
+    public EventResult toResult(String text) {
+
         return EventResult.builder()
-                .message(message)
+                .message(text)
                 .errorCode(this.name())
                 .success(false)
                 .build();
