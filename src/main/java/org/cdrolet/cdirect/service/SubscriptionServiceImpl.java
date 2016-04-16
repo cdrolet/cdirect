@@ -79,11 +79,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Account account = event.getPayload().getAccount();
 
-        checkNotNull(account, "missing account");
+        checkNotNull(account, "missing account in payload");
 
         Subscription subscription = inventory.get(account.getAccountIdentifier());
 
-        checkNotNull(subscription, "missing account identifier");
+        checkNotNull(subscription, "account identifier: " + account.getAccountIdentifier() + " not found");
 
         return subscription;
     }
@@ -110,9 +110,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         inventory.put(subscription.getAccountIdentifier(), subscription);
 
         return subscription;
-
     }
-
 
     private <T> void checkNotNull(T target, String message) {
 
