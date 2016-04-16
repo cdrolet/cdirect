@@ -74,7 +74,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private Subscription loadPreviousSubscription(EventDetail event) {
 
-        Account account = event.getPayload().getAccount();
+/*        Account account = event.getPayload().getAccount();
 
         checkNotNull(account, "missing account");
 
@@ -82,7 +82,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         checkNotNull(subscription, "missing account identifier");
 
-        return subscription;
+        return subscription;*/
+        return Subscription.builder().build();
     }
 
     private void evaluateSubscription(EventDetail event) {

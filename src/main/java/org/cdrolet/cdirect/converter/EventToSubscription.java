@@ -17,7 +17,7 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
     public Subscription apply(Subscription previous, EventDetail eventDetail) {
 
         Subscription.SubscriptionBuilder builder = Subscription.builder();
-
+/*
         Account account = eventDetail.getPayload().getAccount();
         if (account != null) {
             builder.accountIdentifier(account.getAccountIdentifier());
