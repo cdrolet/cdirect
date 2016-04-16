@@ -40,7 +40,7 @@ public class SubscriptionController {
         EventDetail eventDetail = signedFetch(request, eventUrl);
 
         EventResult result = notificationService.processEvent(eventDetail);
-        System.out.println(">>>> result" + result);
+
         return ResponseEntity
                 .accepted()
                 .contentType(MediaType.APPLICATION_JSON)

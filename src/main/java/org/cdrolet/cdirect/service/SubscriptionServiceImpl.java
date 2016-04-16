@@ -3,6 +3,7 @@ package org.cdrolet.cdirect.service;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.converter.EventToSubscription;
+import org.cdrolet.cdirect.converter.SubscriptionToResult;
 import org.cdrolet.cdirect.dto.*;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
@@ -29,52 +30,54 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public EventResult processEvent(EventDetail event) {
 
-        switch (event.getType()) {
-            case SUBSCRIPTION_ORDER:
-                addSubscription(event);
-                break;
-            case SUBSCRIPTION_CHANGE:
-                updateSubscription(event);
-                break;
-            case SUBSCRIPTION_CANCEL:
-                removeSubscription(event);
-                break;
-            case SUBSCRIPTION_NOTICE:
-                evaluateSubscription(event);
-                break;
-        }
-        return null;
+        Subscription subscription = getSubscription(event);
+        return SubscriptionToResult.INSTANCE.apply(subscription);
     }
 
-    private void addSubscription(EventDetail event) {
+    private Subscription getSubscription(EventDetail event) {
+        switch (event.getType()) {
+            case SUBSCRIPTION_ORDER:
+                return addSubscription(event);
+            case SUBSCRIPTION_CHANGE:
+                return updateSubscription(event);
+            case SUBSCRIPTION_CANCEL:
+                return removeSubscription(event);
+            case SUBSCRIPTION_NOTICE:
+                return evaluateSubscription(event);
+            default: throw new ProcessException("unknown event type: " + event.getType(), ErrorCode.UNKNOWN_ERROR);
+        }
+
+    }
+
+    private Subscription addSubscription(EventDetail event) {
 
         Subscription subscription = Subscription.builder()
                 .accountIdentifier(String.valueOf(event.hashCode()))
                 .isActive(true)
                 .build();
 
-        writeSubscription(subscription, event);
+        return writeSubscription(subscription, event);
 
     }
 
-    private void updateSubscription(EventDetail event) {
+    private Subscription updateSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        writeSubscription(previous, event);
+        return writeSubscription(previous, event);
 
     }
 
-    private void removeSubscription(EventDetail event) {
+    private Subscription removeSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        inventory.remove(previous.getAccountIdentifier());
+        return inventory.remove(previous.getAccountIdentifier());
     }
 
     private Subscription loadPreviousSubscription(EventDetail event) {
 
-/*        Account account = event.getPayload().getAccount();
+        Account account = event.getPayload().getAccount();
 
         checkNotNull(account, "missing account");
 
@@ -82,30 +85,31 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         checkNotNull(subscription, "missing account identifier");
 
-        return subscription;*/
-        return Subscription.builder().build();
+        return subscription;
     }
 
-    private void evaluateSubscription(EventDetail event) {
+    private Subscription evaluateSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        Notice notice =  null;//event.getPayload().getNotice();
+        Notice notice = null;//event.getPayload().getNotice();
 
         checkNotNull(notice, "missing notice");
 
         if (notice.getType().equals(NoticeType.CLOSED)) {
-            inventory.remove(previous.getAccountIdentifier());
-        } else {
-            writeSubscription(previous, event);
+            return inventory.remove(previous.getAccountIdentifier());
         }
+
+        return writeSubscription(previous, event);
     }
 
-    private void writeSubscription(Subscription subscription, EventDetail event) {
+    private Subscription writeSubscription(Subscription subscription, EventDetail event) {
 
         subscription = EventToSubscription.INSTANCE.apply(subscription, event);
 
         inventory.put(subscription.getAccountIdentifier(), subscription);
+
+        return subscription;
 
     }
 

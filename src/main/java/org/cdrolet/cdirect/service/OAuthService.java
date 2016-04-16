@@ -1,6 +1,5 @@
 package org.cdrolet.cdirect.service;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -45,35 +44,31 @@ public class OAuthService implements AuthorizationService {
             throw new UnauthorizedException("signed connection failed");
         }
 
-        System.out.println(">>>> connection successful");
-
-        String response = parseResponse(connection);
-
-        System.out.println(">>>> response: " + response);
-
-        Gson gson = new Gson();
-        EventDetail detail = gson.fromJson(response, EventDetail.class);
-
-        System.out.println("======> " + detail);
-        return detail;
+        return RequestUtil.fromJson(parseResponse(connection), EventDetail.class);
     }
 
     private String parseResponse(HttpURLConnection connection) {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            String inputLine;
-            StringBuffer response = new StringBuffer();
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            return response.toString();
+            return readAllLines(in);
 
         } catch (IOException ex) {
             String message = "error occur when parsing event url response";
             log.error(message, ex);
             throw new RuntimeException(message, ex);
         }
+    }
+
+    private String readAllLines(BufferedReader in) throws IOException {
+        StringBuilder response = new StringBuilder();
+
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+
+        return response.toString();
+
     }
 
     private boolean isConnectionSuccessful(HttpURLConnection connection) {
@@ -85,10 +80,6 @@ public class OAuthService implements AuthorizationService {
     }
 
     private OAuthConsumer newConsumerFrom(String key, String signature) {
-
-        System.out.println(">>>> key: " + key);
-        System.out.println(">>>> signature: " + signature);
-
         OAuthConsumer consumer = new DefaultOAuthConsumer(
                 key,
                 signature);
@@ -106,8 +97,6 @@ public class OAuthService implements AuthorizationService {
             consumer.sign(connection);
 
             connection.connect();
-
-            System.out.println(">>>> connection done");
 
             return connection;
 
