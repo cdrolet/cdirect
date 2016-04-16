@@ -7,5 +7,7 @@ import lombok.Data;
  */
 @Data
 public class Notice {
+    private static final long serialVersionUID = 3080925569209286979L;
+
     private NoticeType type;
 }

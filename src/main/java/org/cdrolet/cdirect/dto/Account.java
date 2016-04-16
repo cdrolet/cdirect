@@ -7,6 +7,8 @@ import lombok.Data;
  */
 @Data
 public class Account {
+    private static final long serialVersionUID = 3080925569209286979L;
+
 
     private String accountIdentifier;
 
