@@ -32,7 +32,7 @@ public class NotificationController {
 
     private final AuthorizationService authService;
 
-    @RequestMapping(value = "/subscription/ "+ NOTIFICATION_PATH)
+    @RequestMapping(value = "/subscription/ " + NOTIFICATION_PATH)
     ResponseEntity handleSubscriptionEvent(
             @RequestParam(value = "eventUrl") URL eventUrl,
             HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class NotificationController {
     @ExceptionHandler(ProcessException.class)
     @ResponseStatus(value = HttpStatus.OK)
     public EventResult handleBusinessException(ProcessException ex) {
-        log.info("returning business error: " + ex.getErrorCode().toResult()));
+        log.info("returning business error: " + ex.getErrorCode().toResult());
         return ex.getErrorCode().toResult();
     }
 
