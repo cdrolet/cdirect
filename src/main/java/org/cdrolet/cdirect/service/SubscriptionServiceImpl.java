@@ -89,7 +89,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        Notice notice = event.getPayload().getNotice();
+        Notice notice =  null;//event.getPayload().getNotice();
 
         checkNotNull(notice, "missing notice");
 
