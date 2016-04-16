@@ -10,6 +10,7 @@ import org.cdrolet.cdirect.dto.PricingDuration;
  */
 @Builder
 @Data
+@Getter
 public class Subscription {
 
     private String accountIdentifier;

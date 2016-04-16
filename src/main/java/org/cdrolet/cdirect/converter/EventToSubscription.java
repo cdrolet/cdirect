@@ -21,10 +21,10 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
         Account account = eventDetail.getPayload().getAccount();
         if (account != null) {
             builder.accountIdentifier(account.getAccountIdentifier());
-            builder.isActive(account.getStatus().isActive());
+            builder.active(account.getStatus().isActive());
         } else {
             builder.accountIdentifier(previous.getAccountIdentifier());
-            builder.isActive(previous.isActive());
+            builder.active(previous.isActive());
         }
 
         Order order = eventDetail.getPayload().getOrder();
@@ -41,10 +41,10 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
         if (notice != null) {
             switch(notice.getType()) {
                 case DEACTIVATED:
-                    builder.isActive(false);
+                    builder.active(false);
                     break;
                 case REACTIVATED:
-                    builder.isActive(true);
+                    builder.active(true);
                     break;
                 case CLOSED:
                 case UPCOMING_INVOICE:

@@ -53,7 +53,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription subscription = Subscription.builder()
                 .accountIdentifier(String.valueOf(event.hashCode()))
-                .isActive(true)
+                .active(true)
                 .build();
 
         return writeSubscription(subscription, event);
@@ -92,7 +92,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        Notice notice = null;//event.getPayload().getNotice();
+        Notice notice = event.getPayload().getNotice();
 
         checkNotNull(notice, ErrorCode.UNKNOWN_ERROR, "missing notice");
 
