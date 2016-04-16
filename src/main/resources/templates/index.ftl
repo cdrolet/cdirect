@@ -34,7 +34,7 @@
                 <td>${subscriber.accountIdentifier}</td>
                 <td>${subscriber.editionCode}</td>
                 <td>${subscriber.pricingDuration}</td>
-                <td>${subscriber.active}</td>
+                <td>${subscriber.active}?string('yes', 'no') </td>
             </tr>
         </#list>
     </table>
