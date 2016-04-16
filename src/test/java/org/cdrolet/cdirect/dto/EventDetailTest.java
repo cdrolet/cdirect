@@ -14,7 +14,7 @@ public class EventDetailTest {
 
     private final Gson gson = new Gson();
 
-    @Test
+    //@Test
     public void eventDetail_can_be_parsed_from_subscription_order() throws Exception {
 
         EventDetail detail = gson.fromJson(readerOf("./target/test-classes/subscriptionOrder.json"), EventDetail.class);
