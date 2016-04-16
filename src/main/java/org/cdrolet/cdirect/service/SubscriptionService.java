@@ -1,7 +1,7 @@
 package org.cdrolet.cdirect.service;
 
-import org.cdrolet.cdirect.domain.EventDetail;
-import org.cdrolet.cdirect.domain.EventResult;
+import org.cdrolet.cdirect.dto.EventDetail;
+import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.entity.Subscription;
 
 import java.util.Collection;

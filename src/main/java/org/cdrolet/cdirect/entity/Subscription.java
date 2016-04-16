@@ -2,7 +2,7 @@ package org.cdrolet.cdirect.entity;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.cdrolet.cdirect.domain.PricingDuration;
+import org.cdrolet.cdirect.dto.PricingDuration;
 
 /**
  * Created by c on 4/15/16.

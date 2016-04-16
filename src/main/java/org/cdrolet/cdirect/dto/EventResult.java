@@ -1,7 +1,6 @@
-package org.cdrolet.cdirect.domain;
+package org.cdrolet.cdirect.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 import java.io.Serializable;

@@ -1,6 +1,5 @@
 package org.cdrolet.cdirect.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -8,14 +7,13 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.signature.QueryStringSigningStrategy;
-import org.cdrolet.cdirect.domain.EventDetail;
+import org.cdrolet.cdirect.dto.EventDetail;
 import org.cdrolet.cdirect.exception.UnauthorizedException;
 import org.cdrolet.cdirect.request.RequestUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +34,6 @@ public class OAuthService implements AuthorizationService {
 
     @Override
     public EventDetail authorizeUrl(Map<String, String> authorizationInfo, URL eventUrl) {
-
         OAuthConsumer consumer = newConsumerFrom(
                 authorizationInfo.get(AUTH_KEY.getField()),
                 authorizationInfo.get(AUTH_SIGNATURE.getField()));
@@ -47,7 +44,11 @@ public class OAuthService implements AuthorizationService {
             throw new UnauthorizedException("signed connection failed");
         }
 
+        System.out.println(">>>> connection successful");
+
         String response = parseResponse(connection);
+
+        System.out.println(">>>> response: " + response);
 
         return RequestUtil.fromJson(response, EventDetail.class);
     }
@@ -79,6 +80,10 @@ public class OAuthService implements AuthorizationService {
     }
 
     private OAuthConsumer newConsumerFrom(String key, String signature) {
+
+        System.out.println(">>>> key: " + key);
+        System.out.println(">>>> signature: " + signature);
+
         OAuthConsumer consumer = new DefaultOAuthConsumer(
                 key,
                 signature);
@@ -97,11 +102,11 @@ public class OAuthService implements AuthorizationService {
 
             connection.connect();
 
+            System.out.println(">>>> connection done");
+
             return connection;
 
         } catch (OAuthExpectationFailedException | OAuthMessageSignerException  ex) {
-            // note: I didn't find explanations in javadoc.
-            // I assume these exceptions to be at the signature level.
             String message = "non authorized url: " + url.toString();
             log.error(message, ex);
             throw new UnauthorizedException(message);

@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.domain;
+package org.cdrolet.cdirect.dto;
 
 /**
  * Created by c on 4/15/16.

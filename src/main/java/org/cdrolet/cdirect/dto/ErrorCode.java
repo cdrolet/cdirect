@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.domain;
+package org.cdrolet.cdirect.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

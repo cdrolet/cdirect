@@ -1,6 +1,6 @@
 package org.cdrolet.cdirect.converter;
 
-import org.cdrolet.cdirect.domain.*;
+import org.cdrolet.cdirect.dto.*;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
 

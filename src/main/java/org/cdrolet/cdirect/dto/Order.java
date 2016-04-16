@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.domain;
+package org.cdrolet.cdirect.dto;
 
 import com.google.common.collect.Lists;
 import lombok.Data;

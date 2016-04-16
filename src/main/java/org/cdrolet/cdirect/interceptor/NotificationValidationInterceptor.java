@@ -2,16 +2,12 @@ package org.cdrolet.cdirect.interceptor;
 
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.cdrolet.cdirect.domain.ErrorCode;
-import org.cdrolet.cdirect.domain.EventResult;
+import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.request.NotificationRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

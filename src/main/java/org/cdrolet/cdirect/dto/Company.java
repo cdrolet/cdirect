@@ -1,8 +1,7 @@
-package org.cdrolet.cdirect.domain;
+package org.cdrolet.cdirect.dto;
 
 import lombok.Data;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Data

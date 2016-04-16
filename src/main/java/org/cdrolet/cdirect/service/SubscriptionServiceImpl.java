@@ -3,7 +3,7 @@ package org.cdrolet.cdirect.service;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.converter.EventToSubscription;
-import org.cdrolet.cdirect.domain.*;
+import org.cdrolet.cdirect.dto.*;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.springframework.stereotype.Service;

@@ -2,9 +2,9 @@ package org.cdrolet.cdirect.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.cdrolet.cdirect.domain.ErrorCode;
-import org.cdrolet.cdirect.domain.EventDetail;
-import org.cdrolet.cdirect.domain.EventResult;
+import org.cdrolet.cdirect.dto.ErrorCode;
+import org.cdrolet.cdirect.dto.EventDetail;
+import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.exception.UnauthorizedException;
 import org.cdrolet.cdirect.request.RequestUtil;
@@ -21,10 +21,6 @@ import java.net.URL;
 
 import static org.cdrolet.cdirect.request.NotificationRequest.*;
 
-
-/**
- * Created by root on 4/10/16.
- */
 @RestController
 @RequestMapping(value = "/v1", produces = "application/json")
 @Slf4j
@@ -44,7 +40,7 @@ public class SubscriptionController {
         EventDetail eventDetail = signedFetch(request, eventUrl);
 
         EventResult result = notificationService.processEvent(eventDetail);
-
+        System.out.println(">>>> result" + result);
         return ResponseEntity
                 .accepted()
                 .contentType(MediaType.APPLICATION_JSON)
