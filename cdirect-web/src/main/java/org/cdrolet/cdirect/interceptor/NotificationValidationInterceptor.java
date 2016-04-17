@@ -7,28 +7,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 import static org.cdrolet.cdirect.controller.NotificationController.NOTIFICATION_PATH;
 
 /**
  * Created by c on 4/12/16.
  */
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor()
 public class NotificationValidationInterceptor extends HandlerInterceptorAdapter {
 
     private final AuthorizationService authService;
 
     private final Gson parser;
 
-    @Value("${auth.key}")
-    private String key;
+    private final String authKey;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -84,7 +82,7 @@ public class NotificationValidationInterceptor extends HandlerInterceptorAdapter
 
         String submittedKey = authService.getKey(getAuthHeaders(request)).get();
 
-        if (!submittedKey.equals(key)) {
+        if (!submittedKey.equals(authKey)) {
             handleUnauthorizedRequest(response, "invalid signature: " + submittedKey);
             return false;
         }
