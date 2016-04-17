@@ -48,7 +48,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private Subscription getSubscription(EventDetail event) {
         switch (event.getType()) {
             case SUBSCRIPTION_ORDER:
-                return addSubscription(event);
+                return updateSubscription(event);
             case SUBSCRIPTION_CHANGE:
                 return updateSubscription(event);
             case SUBSCRIPTION_CANCEL:
@@ -61,26 +61,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     }
 
-    private Subscription addSubscription(EventDetail event) {
-
-        Subscription subscription = repository.findOne(getId(event));
-
-        if (subscription != null) {
-            throw new ProcessException("account " + subscription.getId() + " already exist", ErrorCode.USER_ALREADY_EXISTS)
-        }
-
-        subscription = EventToSubscription.INSTANCE.apply(new Subscription(), event);
-
-        return repository.save(subscription);
-    }
-
     private Subscription updateSubscription(EventDetail event) {
 
-        Subscription previous = loadPreviousSubscription(event);
+        Subscription subscription = EventToSubscription.INSTANCE.apply(event);
 
-        Subscription updated = EventToSubscription.INSTANCE.apply(previous, event);
-
-        return repository.save(updated);
+        return repository.save(subscription);
 
     }
 

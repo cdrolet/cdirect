@@ -7,16 +7,17 @@ import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.type.ErrorCode;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Created by c on 4/15/16.
  */
-public enum EventToSubscription implements BiFunction<Subscription, EventDetail, Subscription> {
+public enum EventToSubscription implements Function<EventDetail, Subscription> {
 
     INSTANCE;
 
     @Override
-    public Subscription apply(Subscription previous, EventDetail eventDetail) {
+    public Subscription apply(EventDetail eventDetail) {
 
         Subscription subscription = new Subscription();
 
