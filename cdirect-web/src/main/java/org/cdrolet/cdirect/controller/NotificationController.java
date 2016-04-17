@@ -9,6 +9,7 @@ import org.cdrolet.cdirect.exception.UnauthorizedException;
 import org.cdrolet.cdirect.service.AuthorizationService;
 import org.cdrolet.cdirect.service.SubscriptionService;
 import org.cdrolet.cdirect.type.ErrorCode;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,5 +76,18 @@ public class NotificationController {
 
         return result;
     }
+
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseStatus(value = HttpStatus.OK)
+    public EventResult handleSqlException(DataAccessException ex) {
+
+        EventResult result = ErrorCode.UNKNOWN_ERROR.toResult(ex.getMessage());
+
+        log.info("returning process error {} ", result);
+
+        return result;
+    }
+
+
 
 }

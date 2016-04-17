@@ -1,6 +1,7 @@
 package org.cdrolet.cdirect.entity;
 
 import lombok.Data;
+import org.cdrolet.cdirect.dto.Subscriber;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -27,4 +28,27 @@ public class Subscription {
 
     @Column(name = "duration", nullable = false)
     private String pricingDuration;
+
+    public static Subscription from(Subscription previous,
+                                    Subscription newOne) {
+
+        Subscription sub = new Subscription();
+
+        sub.setActive(newOne.getActive() == null
+                ? previous.getActive()
+                : newOne.getActive());
+
+        sub.setEditionCode(newOne.getEditionCode() == null
+                ? previous.getEditionCode()
+                : newOne.getEditionCode());
+
+        sub.setPricingDuration(newOne.getPricingDuration() == null
+                ? previous.getPricingDuration()
+                : newOne.getPricingDuration());
+
+        sub.setId(newOne.getId());
+
+        return sub;
+    }
+
 }
