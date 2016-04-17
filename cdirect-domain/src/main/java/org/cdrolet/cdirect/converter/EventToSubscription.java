@@ -37,10 +37,17 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
 
         Account account = eventDetail.getPayload().getAccount();
 
-        if (account != null && account.getStatus() != null) {
+        if (account == null) {
+            return;
+        }
+
+        if (account.getStatus() != null) {
             subscription.setActive(account.getStatus().isActive());
         }
 
+        if (account.getAccountIdentifier() != null) {
+            subscription.setId(account.getAccountIdentifier());
+        }
     }
 
     private void convertOrder(EventDetail eventDetail, Subscription subscription) {

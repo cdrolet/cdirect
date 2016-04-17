@@ -33,6 +33,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public EventResult processEvent(EventDetail event) {
 
+        log.info("Event received: " + event);
+
         Subscription subscription = getSubscription(event);
         return SubscriptionToResult.INSTANCE.apply(subscription);
     }
@@ -61,10 +63,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private Subscription addSubscription(EventDetail event) {
 
-        Subscription subscription = new Subscription();
-        subscription.setActive(true);
-        subscription.setPricingDuration(event.getPayload().getOrder().getPricingDuration().name());
-        subscription.setEditionCode(event.getPayload().getOrder().getEditionCode());
+        Subscription subscription = repository.findOne(getId(event));
+
+        if (subscription != null) {
+            throw new ProcessException("account " + subscription.getId() + " already exist", ErrorCode.USER_ALREADY_EXISTS)
+        }
+
+        subscription = EventToSubscription.INSTANCE.apply(new Subscription(), event);
 
         return repository.save(subscription);
     }
