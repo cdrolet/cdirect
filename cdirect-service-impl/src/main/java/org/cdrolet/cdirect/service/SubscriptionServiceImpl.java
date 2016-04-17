@@ -13,6 +13,7 @@ import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.repository.SubscriptionRepository;
 import org.cdrolet.cdirect.type.ErrorCode;
+import org.cdrolet.cdirect.type.EventType;
 import org.cdrolet.cdirect.type.NoticeType;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private Subscription updateSubscription(EventDetail event) {
 
         Subscription subscription = EventToSubscription.INSTANCE.apply(event);
+
+        if (event.getType().equals(EventType.SUBSCRIPTION_ORDER)) {
+            subscription.setActive(true);
+        }
 
         return repository.save(subscription);
 

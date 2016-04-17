@@ -15,10 +15,10 @@ public enum SubscriptionToSubscriber implements Function<Subscription, Subscribe
     @Override
     public Subscriber apply(Subscription subscription) {
         return Subscriber.builder()
-                .accountIdentifier(subscription.getId())
+                .accountIdentifier(subscription.getId().trim())
                 .active(subscription.getActive() ? "Yes" : "No")
-                .pricingDuration(PricingDuration.valueOf(subscription.getPricingDuration()))
-                .editionCode(subscription.getEditionCode())
+                .pricingDuration(PricingDuration.valueOf(subscription.getPricingDuration().trim()))
+                .editionCode(subscription.getEditionCode().trim())
                 .build();
     }
 
