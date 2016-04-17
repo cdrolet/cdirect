@@ -1,2 +1,2 @@
 # cdirect
-A test application for using the appdirect api
+A sample application that integrate with appdirect api
