@@ -17,11 +17,12 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
 
     @Autowired
-    private NotificationValidationInterceptor interceptor;
+    private AuthorizationService authService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor);
+        registry.addInterceptor(
+                new NotificationValidationInterceptor(authService, parser()));
     }
 
 

@@ -21,7 +21,6 @@ import static org.cdrolet.cdirect.controller.NotificationController.NOTIFICATION
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-@Component
 public class NotificationValidationInterceptor extends HandlerInterceptorAdapter {
 
     private final AuthorizationService authService;
