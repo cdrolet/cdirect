@@ -16,7 +16,7 @@ public enum SubscriptionToResult implements Function<Subscription, EventResult> 
     public EventResult apply(Subscription subscription) {
 
         return EventResult.builder()
-                .accountIdentifier(subscription.getAccountIdentifier())
+                .accountIdentifier(subscription.getId())
                 .success(true)
                 .build();
     }

@@ -1,5 +1,6 @@
 /home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/service/SubscriptionServiceImpl.java
 /home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/service/OAuthService.java
+/home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/repository/SubscriptionRepository.java
 /home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/service/Utility.java
 /home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/service/OAuthUrlProcessor.java
 /home/c/Archives/dev/cdirect/cdirect-service-impl/src/main/java/org/cdrolet/cdirect/service/OAuthField.java

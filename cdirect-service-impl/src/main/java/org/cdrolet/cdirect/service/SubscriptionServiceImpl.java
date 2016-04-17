@@ -1,31 +1,34 @@
 package org.cdrolet.cdirect.service;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.converter.EventToSubscription;
 import org.cdrolet.cdirect.converter.SubscriptionToResult;
-import org.cdrolet.cdirect.dto.*;
+import org.cdrolet.cdirect.dto.Account;
+import org.cdrolet.cdirect.dto.EventDetail;
+import org.cdrolet.cdirect.dto.EventResult;
+import org.cdrolet.cdirect.dto.Notice;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
+import org.cdrolet.cdirect.repository.SubscriptionRepository;
+import org.cdrolet.cdirect.type.ErrorCode;
+import org.cdrolet.cdirect.type.NoticeType;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Map;
-import org.cdrolet.cdirect.service.SubscriptionService;
+
 /**
  * Created by cdrolet on 4/10/16.
  */
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private final Map<String, Subscription> inventory = Maps.newHashMap();
-
-    @Override
-    public Collection<Subscription> getAll() {
-        return inventory.values();
-    }
+    private final SubscriptionRepository repository;
 
     @Override
     public EventResult processEvent(EventDetail event) {
@@ -33,6 +36,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = getSubscription(event);
         return SubscriptionToResult.INSTANCE.apply(subscription);
     }
+
+    @Override
+    public Collection<Subscription> getAll() {
+        return Lists.newArrayList(repository.findAll());
+    }
+
 
     private Subscription getSubscription(EventDetail event) {
         switch (event.getType()) {
@@ -44,27 +53,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 return removeSubscription(event);
             case SUBSCRIPTION_NOTICE:
                 return evaluateSubscription(event);
-            default: throw new ProcessException("unknown event type: " + event.getType(), ErrorCode.UNKNOWN_ERROR);
+            default:
+                throw new ProcessException("unknown event type: " + event.getType(), ErrorCode.UNKNOWN_ERROR);
         }
 
     }
 
     private Subscription addSubscription(EventDetail event) {
 
-        Subscription subscription = Subscription.builder()
-                .accountIdentifier(String.valueOf(event.hashCode()))
-                .active(true)
-                .build();
+        Subscription subscription = new Subscription();
+        subscription.setActive(true);
+        subscription.setPricingDuration(event.getPayload().getOrder().getPricingDuration().name());
+        subscription.setEditionCode(event.getPayload().getOrder().getEditionCode());
 
-        return writeSubscription(subscription, event);
-
+        return repository.save(subscription);
     }
 
     private Subscription updateSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        return writeSubscription(previous, event);
+        Subscription updated = EventToSubscription.INSTANCE.apply(previous, event);
+
+        return repository.save(updated);
 
     }
 
@@ -72,44 +83,46 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        return inventory.remove(previous.getAccountIdentifier());
+        repository.delete(getId(event));
+
+        return previous;
     }
 
     private Subscription loadPreviousSubscription(EventDetail event) {
+
+        String id = getId(event);
+
+        Subscription subscription = repository.findOne(getId(event));
+
+        checkNotNull(subscription, ErrorCode.ACCOUNT_NOT_FOUND, "account identifier: " + id + " not found");
+
+        return subscription;
+    }
+
+    private String getId(EventDetail event) {
+
+        checkNotNull(event.getPayload(), ErrorCode.UNKNOWN_ERROR, "missing payload");
 
         Account account = event.getPayload().getAccount();
 
         checkNotNull(account, ErrorCode.UNKNOWN_ERROR, "missing account in payload");
 
-        Subscription subscription = inventory.get(account.getAccountIdentifier());
+        checkNotNull(account.getAccountIdentifier(), ErrorCode.UNKNOWN_ERROR, "missing account identifier");
 
-        checkNotNull(subscription, ErrorCode.ACCOUNT_NOT_FOUND, "account identifier: " + account.getAccountIdentifier() + " not found");
-
-        return subscription;
+        return account.getAccountIdentifier();
     }
 
     private Subscription evaluateSubscription(EventDetail event) {
-
-        Subscription previous = loadPreviousSubscription(event);
 
         Notice notice = event.getPayload().getNotice();
 
         checkNotNull(notice, ErrorCode.UNKNOWN_ERROR, "missing notice");
 
         if (notice.getType().equals(NoticeType.CLOSED)) {
-            return inventory.remove(previous.getAccountIdentifier());
+            return removeSubscription(event);
         }
 
-        return writeSubscription(previous, event);
-    }
-
-    private Subscription writeSubscription(Subscription subscription, EventDetail event) {
-
-        subscription = EventToSubscription.INSTANCE.apply(subscription, event);
-
-        inventory.put(subscription.getAccountIdentifier(), subscription);
-
-        return subscription;
+        return updateSubscription(event);
     }
 
     private <T> void checkNotNull(T target, ErrorCode code, String message) {

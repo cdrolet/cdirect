@@ -1,6 +1,7 @@
-org/cdrolet/cdirect/service/OAuthField.class
 org/cdrolet/cdirect/service/Utility.class
-org/cdrolet/cdirect/service/OAuthUrlProcessor.class
 org/cdrolet/cdirect/service/SubscriptionServiceImpl.class
+org/cdrolet/cdirect/repository/SubscriptionRepository.class
+org/cdrolet/cdirect/service/OAuthField.class
+org/cdrolet/cdirect/service/OAuthUrlProcessor.class
 org/cdrolet/cdirect/service/SubscriptionServiceImpl$1.class
 org/cdrolet/cdirect/service/OAuthService.class

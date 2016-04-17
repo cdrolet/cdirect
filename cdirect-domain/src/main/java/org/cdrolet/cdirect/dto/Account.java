@@ -1,6 +1,7 @@
 package org.cdrolet.cdirect.dto;
 
 import lombok.Data;
+import org.cdrolet.cdirect.type.AccountStatus;
 
 /**
  * Created by root on 4/10/16.

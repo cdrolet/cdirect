@@ -2,6 +2,7 @@ package org.cdrolet.cdirect.dto;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
+import org.cdrolet.cdirect.type.PricingDuration;
 
 import java.io.Serializable;
 import java.util.List;

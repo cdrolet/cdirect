@@ -1,20 +1,30 @@
 package org.cdrolet.cdirect.entity;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  * Created by c on 4/15/16.
  */
-@Builder
-@Getter
+@Entity
+@Data
 public class Subscription {
 
-    private String accountIdentifier;
 
-    private boolean active;
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "id")
+    private String id;
 
+    @Column(name = "active", nullable = false)
+    private Boolean active;
+
+    @Column(name = "edition", nullable = false)
     private String editionCode;
 
+    @Column(name = "duration", nullable = false)
     private String pricingDuration;
 }

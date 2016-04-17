@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.dto;
+package org.cdrolet.cdirect.type;
 
 /**
  * Created by cdrolet on 4/9/2016.

@@ -1,8 +1,10 @@
 package org.cdrolet.cdirect.converter;
 
+import com.google.common.base.Strings;
 import org.cdrolet.cdirect.dto.*;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
+import org.cdrolet.cdirect.type.ErrorCode;
 
 import java.util.function.BiFunction;
 
@@ -16,35 +18,58 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
     @Override
     public Subscription apply(Subscription previous, EventDetail eventDetail) {
 
-        Subscription.SubscriptionBuilder builder = Subscription.builder();
+        Subscription subscription = new Subscription();
+
+        if (eventDetail.getPayload() == null) {
+            throw new ProcessException("no payload in event", ErrorCode.UNKNOWN_ERROR);
+        }
+
+        convertAccount(eventDetail, subscription);
+
+        convertOrder(eventDetail, subscription);
+
+        convertNotice(eventDetail, subscription);
+
+        return subscription;
+    }
+
+    private void convertAccount(EventDetail eventDetail, Subscription subscription) {
 
         Account account = eventDetail.getPayload().getAccount();
-        if (account != null) {
-            builder.accountIdentifier(account.getAccountIdentifier());
-            builder.active(account.getStatus().isActive());
-        } else {
-            builder.accountIdentifier(previous.getAccountIdentifier());
-            builder.active(previous.isActive());
+
+        if (account != null && account.getStatus() != null) {
+            subscription.setActive(account.getStatus().isActive());
         }
+
+    }
+
+    private void convertOrder(EventDetail eventDetail, Subscription subscription) {
 
         Order order = eventDetail.getPayload().getOrder();
-        if (order != null) {
-            builder.pricingDuration(order.getPricingDuration().name());
-            builder.editionCode(order.getEditionCode());
-        } else {
-            builder.pricingDuration(previous.getPricingDuration());
-            builder.editionCode(previous.getEditionCode());
+
+        if (order == null) {
+            return;
         }
 
+        if (order.getPricingDuration() != null) {
+            subscription.setPricingDuration(order.getPricingDuration().name());
+        }
+
+        if (order.getEditionCode() != null) {
+            subscription.setEditionCode(order.getEditionCode());
+        }
+    }
+
+    private void convertNotice(EventDetail eventDetail, Subscription subscription) {
 
         Notice notice = eventDetail.getPayload().getNotice();
         if (notice != null) {
             switch(notice.getType()) {
                 case DEACTIVATED:
-                    builder.active(false);
+                    subscription.setActive(false);
                     break;
                 case REACTIVATED:
-                    builder.active(true);
+                    subscription.setActive(true);
                     break;
                 case CLOSED:
                 case UPCOMING_INVOICE:
@@ -54,8 +79,5 @@ public enum EventToSubscription implements BiFunction<Subscription, EventDetail,
             }
 
         }
-
-
-        return builder.build();
     }
 }

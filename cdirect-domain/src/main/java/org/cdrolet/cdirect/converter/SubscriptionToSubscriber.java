@@ -1,8 +1,8 @@
 package org.cdrolet.cdirect.converter;
 
-import org.cdrolet.cdirect.dto.PricingDuration;
 import org.cdrolet.cdirect.dto.Subscriber;
 import org.cdrolet.cdirect.entity.Subscription;
+import org.cdrolet.cdirect.type.PricingDuration;
 
 import java.util.function.Function;
 
@@ -15,8 +15,8 @@ public enum SubscriptionToSubscriber implements Function<Subscription, Subscribe
     @Override
     public Subscriber apply(Subscription subscription) {
         return Subscriber.builder()
-                .accountIdentifier(subscription.getAccountIdentifier())
-                .active(subscription.isActive() ? "Yes" : "No")
+                .accountIdentifier(subscription.getId())
+                .active(subscription.getActive() ? "Yes" : "No")
                 .pricingDuration(PricingDuration.valueOf(subscription.getPricingDuration()))
                 .editionCode(subscription.getEditionCode())
                 .build();

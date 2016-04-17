@@ -2,7 +2,7 @@ package org.cdrolet.cdirect.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.cdrolet.cdirect.dto.ErrorCode;
+import org.cdrolet.cdirect.type.ErrorCode;
 
 /**
  * Created by c on 4/14/16.

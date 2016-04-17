@@ -2,6 +2,7 @@ package org.cdrolet.cdirect.dto;
 
 
 import lombok.Data;
+import org.cdrolet.cdirect.type.UsageUnit;
 
 import java.io.Serializable;
 

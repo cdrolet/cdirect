@@ -2,13 +2,13 @@ package org.cdrolet.cdirect.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.cdrolet.cdirect.dto.ErrorCode;
 import org.cdrolet.cdirect.dto.EventDetail;
 import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.exception.UnauthorizedException;
 import org.cdrolet.cdirect.service.AuthorizationService;
 import org.cdrolet.cdirect.service.SubscriptionService;
+import org.cdrolet.cdirect.type.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +30,8 @@ public class NotificationController {
 
     private final AuthorizationService authService;
 
-    @RequestMapping(value = "/subscription/" + NOTIFICATION_PATH)
-    ResponseEntity handleSubscriptionEvent(
+    @RequestMapping(value = "/" + NOTIFICATION_PATH)
+    ResponseEntity handleNotificationEvent(
             @RequestParam(value = "eventUrl") URL eventUrl,
             HttpServletRequest request) {
 

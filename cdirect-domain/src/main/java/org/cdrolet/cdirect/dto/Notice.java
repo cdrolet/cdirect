@@ -1,6 +1,7 @@
 package org.cdrolet.cdirect.dto;
 
 import lombok.Data;
+import org.cdrolet.cdirect.type.NoticeType;
 
 /**
  * Created by c on 4/15/16.

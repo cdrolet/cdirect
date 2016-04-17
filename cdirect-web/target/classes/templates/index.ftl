@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html>
-<script src="w3-include-HTML.js"></script>
 <head>
-    <title>cdirect</title>
-    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/main.css" th:href="@{/main.css}"/>
+    <#include "header.ftl"/>
 </head>
 
 <body>
 
-<div w3-include-HTML="nav.html"></div>
+<#include "nav.ftl"/>
 
 <div class="jumbotron text-center">
   <div class="container">
@@ -34,14 +29,15 @@
             <th>Pricing Duration</th>
             <th>Active</th>
         </tr>
-        <th:block th:each="subscriberList : ${subscriber}">
+        <#list model["subscriberList"] as subscriber>
             <tr>
-                <td>th:text=${subscriber.accountIdentifier}</td>
-                <td>th:text=${subscriber.editionCode}</td>
-                <td>th:text=${subscriber.pricingDuration}</td>
-                <td>th:text=${subscriber.active}</td>
+                <td>${subscriber.accountIdentifier}</td>
+                <td>${subscriber.editionCode}</td>
+                <td>${subscriber.pricingDuration}</td>
+                <td>${subscriber.active}</td>
             </tr>
-        </th:block>
+        </#list>
+
     </table>
 </div>
 <div class="container">
@@ -51,7 +47,7 @@
   <div class="row">
     <div class="col-md-6">
       <h4><span class="glyphicon glyphicon-info-sign"></span> How tho run this application</h4>
-        <pre class="terminal">git clone git@github.com:cdrolet/cdirect.git<br></br>cd cdirect<br></br>mvn install<br></br>java -jar target/cdirect-1.2.jar</pre>
+        <pre class="terminal">git clone git@github.com:cdrolet/cdirect.git<br>cd cdirect<br>mvn install<br>java -jar cdirect-web/target/cdirect-web.1.2.jar</pre>
     </div>
   </div>
 

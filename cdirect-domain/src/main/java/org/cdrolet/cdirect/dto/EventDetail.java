@@ -1,6 +1,8 @@
 package org.cdrolet.cdirect.dto;
 
 import lombok.Data;
+import org.cdrolet.cdirect.type.EventFlag;
+import org.cdrolet.cdirect.type.EventType;
 
 import java.io.Serializable;
 

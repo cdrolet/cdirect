@@ -1,7 +1,8 @@
-package org.cdrolet.cdirect.dto;
+package org.cdrolet.cdirect.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.cdrolet.cdirect.dto.EventResult;
 
 /**
  * Created by root on 4/10/16.
