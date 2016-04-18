@@ -1,2 +1,5 @@
+org/cdrolet/cdirect/service/EventProcessor.class
+org/cdrolet/cdirect/service/CustomerService.class
 org/cdrolet/cdirect/service/AuthorizationService.class
 org/cdrolet/cdirect/service/SubscriptionService.class
+org/cdrolet/cdirect/service/NotificationService.class

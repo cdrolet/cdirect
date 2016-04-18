@@ -12,6 +12,7 @@ public class Order implements Serializable {
     private static final long serialVersionUID = -6727466858109325508L;
 
     private String editionCode;
+    private String addonOfferingCode;
     private PricingDuration pricingDuration;
     private List<Item> items = Lists.newArrayList();
 

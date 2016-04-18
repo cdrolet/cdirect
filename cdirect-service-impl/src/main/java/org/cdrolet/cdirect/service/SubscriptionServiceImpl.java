@@ -3,21 +3,27 @@ package org.cdrolet.cdirect.service;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.cdrolet.cdirect.converter.EventToCustomer;
 import org.cdrolet.cdirect.converter.EventToSubscription;
 import org.cdrolet.cdirect.converter.SubscriptionToResult;
-import org.cdrolet.cdirect.dto.Account;
-import org.cdrolet.cdirect.dto.EventDetail;
-import org.cdrolet.cdirect.dto.EventResult;
-import org.cdrolet.cdirect.dto.Notice;
+import org.cdrolet.cdirect.converter.SubscriptionToSubscriber;
+import org.cdrolet.cdirect.dto.*;
+import org.cdrolet.cdirect.entity.Customer;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.repository.SubscriptionRepository;
 import org.cdrolet.cdirect.type.ErrorCode;
 import org.cdrolet.cdirect.type.NoticeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Created by cdrolet on 4/10/16.
@@ -32,16 +38,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public EventResult processEvent(EventDetail event) {
-
-        log.info("Event received: " + event);
-
         Subscription subscription = getSubscription(event);
         return SubscriptionToResult.INSTANCE.apply(subscription);
     }
 
     @Override
-    public Collection<Subscription> getAll() {
-        return Lists.newArrayList(repository.findAll());
+    public Collection<Subscriber> getAll() {
+
+        Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "id");
+
+        Page<Subscription> page = repository.findAll(pageable);
+
+        return page.getContent().stream()
+                .map(SubscriptionToSubscriber.INSTANCE)
+                .collect(Collectors.toList());
     }
 
 
@@ -55,6 +65,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 return removeSubscription(event);
             case SUBSCRIPTION_NOTICE:
                 return evaluateSubscription(event);
+            case USER_ASSIGNMENT:
+                return assignUser(event);
             default:
                 throw new ProcessException("unknown event type: " + event.getType(), ErrorCode.UNKNOWN_ERROR);
         }
@@ -66,10 +78,25 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = EventToSubscription.INSTANCE.apply(event);
         subscription.setActive(true);
 
+        Customer customer = EventToCustomer.INSTANCE.apply(event);
+        subscription.addCustomer(customer);
+
         return repository.save(subscription);
 
     }
 
+    private Subscription assignUser(EventDetail event) {
+
+        Subscription subscription = loadPreviousSubscription(event);
+
+        Customer customer = EventToCustomer.INSTANCE.apply(event);
+
+        subscription.addCustomer(customer);
+
+        return subscription;
+    }
+
+    @Transactional
     private Subscription updateSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);
@@ -81,6 +108,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     }
 
+    @Transactional
     private Subscription removeSubscription(EventDetail event) {
 
         Subscription previous = loadPreviousSubscription(event);

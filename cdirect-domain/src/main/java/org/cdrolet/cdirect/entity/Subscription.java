@@ -1,10 +1,11 @@
 package org.cdrolet.cdirect.entity;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
-import org.cdrolet.cdirect.dto.Subscriber;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by c on 4/15/16.
@@ -12,7 +13,6 @@ import javax.persistence.*;
 @Entity
 @Data
 public class Subscription {
-
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -28,6 +28,14 @@ public class Subscription {
 
     @Column(name = "duration", nullable = false)
     private String pricingDuration;
+
+    @OneToMany(mappedBy = "subscription", orphanRemoval = true, cascade = { CascadeType.ALL })
+    private List<Customer> customers = Lists.newArrayList();
+
+    public void addCustomer(Customer customer) {
+        customer.setSubscription(this);
+        customers.add(customer);
+    }
 
     public static Subscription from(Subscription previous,
                                     Subscription newOne) {
@@ -45,6 +53,10 @@ public class Subscription {
         sub.setPricingDuration(newOne.getPricingDuration() == null
                 ? previous.getPricingDuration()
                 : newOne.getPricingDuration());
+
+        sub.setCustomers(newOne.getCustomers() == null
+                ? previous.getCustomers()
+                : newOne.getCustomers());
 
         sub.setId(newOne.getId());
 

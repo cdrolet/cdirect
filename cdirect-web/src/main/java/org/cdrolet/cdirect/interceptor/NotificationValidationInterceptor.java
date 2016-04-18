@@ -91,33 +91,27 @@ public class NotificationValidationInterceptor extends HandlerInterceptorAdapter
     }
 
     private String getAuthHeaders(HttpServletRequest request) {
+
         return request.getHeader(authService.getAuthorizationId());
+
     }
 
     private void handleBadRequest(HttpServletResponse response, String errorMessage) {
 
-        log.warn(errorMessage);
-
-        response.setStatus(400);
-        response.setContentType("application/json");
-        try {
-            parser.toJson(
-                    EventResult
-                            .builder()
-                            .message(errorMessage)
-                            .build(),
-                    response.getWriter());
-        } catch (IOException ex) {
-            log.error("error occur when handling invalid request headers", ex);
-        }
+        handleErrorRequest(response, 400, errorMessage);
 
     }
 
     private void handleUnauthorizedRequest(HttpServletResponse response, String errorMessage) {
 
+        handleErrorRequest(response, 403, errorMessage);
+
+    }
+
+    private void handleErrorRequest(HttpServletResponse response, int status, String errorMessage) {
         log.warn(errorMessage);
 
-        response.setStatus(401);
+        response.setStatus(status);
         response.setContentType("application/json");
         try {
             parser.toJson(
@@ -127,8 +121,10 @@ public class NotificationValidationInterceptor extends HandlerInterceptorAdapter
                             .build(),
                     response.getWriter());
         } catch (IOException ex) {
-            log.error("error occur when handling unauthorized request", ex);
+            log.error("error occur when handling error", ex);
         }
 
+
     }
+
 }

@@ -24,10 +24,7 @@ public class MainController {
     public String welcome(@ModelAttribute("model") ModelMap model) {
 
         model.addAttribute("subscriberList",
-                subscriptionService.getAll()
-                        .stream()
-                        .map(SubscriptionToSubscriber.INSTANCE)
-                        .collect(Collectors.toList()));
+                subscriptionService.getAll());
 
         return "index";
     }

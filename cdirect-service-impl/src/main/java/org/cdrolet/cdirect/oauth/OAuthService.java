@@ -1,7 +1,10 @@
-package org.cdrolet.cdirect.service;
+package org.cdrolet.cdirect.oauth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.dto.EventDetail;
+import org.cdrolet.cdirect.oauth.OAuthField;
+import org.cdrolet.cdirect.oauth.OAuthUrlProcessor;
+import org.cdrolet.cdirect.service.AuthorizationService;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;

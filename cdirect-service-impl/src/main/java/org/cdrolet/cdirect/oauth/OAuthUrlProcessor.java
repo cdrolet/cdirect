@@ -1,6 +1,5 @@
-package org.cdrolet.cdirect.service;
+package org.cdrolet.cdirect.oauth;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
