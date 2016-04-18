@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.oauth;
+package org.cdrolet.cdirect.service.oauth;
 
 import lombok.extern.slf4j.Slf4j;
 import oauth.signpost.OAuthConsumer;

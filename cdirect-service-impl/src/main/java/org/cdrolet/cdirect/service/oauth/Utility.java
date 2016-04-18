@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.oauth;
+package org.cdrolet.cdirect.service.oauth;
 
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;

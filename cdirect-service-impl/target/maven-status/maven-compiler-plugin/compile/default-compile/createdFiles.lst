@@ -1,12 +1,12 @@
 org/cdrolet/cdirect/service/CustomerServiceImpl.class
-org/cdrolet/cdirect/oauth/OAuthField.class
-org/cdrolet/cdirect/oauth/Utility.class
-org/cdrolet/cdirect/oauth/OAuthService.class
+org/cdrolet/cdirect/service/oauth/OAuthField.class
 org/cdrolet/cdirect/service/NotificationServiceImpl.class
 org/cdrolet/cdirect/service/NotificationServiceImpl$1.class
 org/cdrolet/cdirect/service/SubscriptionServiceImpl$1.class
 org/cdrolet/cdirect/service/CustomerServiceImpl$1.class
 org/cdrolet/cdirect/service/SubscriptionServiceImpl.class
+org/cdrolet/cdirect/service/oauth/Utility.class
 org/cdrolet/cdirect/repository/CustomerRepository.class
 org/cdrolet/cdirect/repository/SubscriptionRepository.class
-org/cdrolet/cdirect/oauth/OAuthUrlProcessor.class
+org/cdrolet/cdirect/service/oauth/OAuthUrlProcessor.class
+org/cdrolet/cdirect/service/oauth/OAuthService.class

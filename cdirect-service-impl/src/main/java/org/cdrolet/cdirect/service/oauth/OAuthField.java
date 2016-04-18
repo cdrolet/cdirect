@@ -1,4 +1,4 @@
-package org.cdrolet.cdirect.oauth;
+package org.cdrolet.cdirect.service.oauth;
 
 import com.google.common.base.Strings;
 import lombok.Getter;

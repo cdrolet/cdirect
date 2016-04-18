@@ -79,6 +79,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = repository.findOne(getUserId(event));
 
+        if (customer.getDefaultUser()) {
+            throw new ProcessException("can't unassign the default user", ErrorCode.FORBIDDEN);
+        }
+
         customer.getSubscription().getCustomers().remove(customer);
 
         customer.setSubscription(null);

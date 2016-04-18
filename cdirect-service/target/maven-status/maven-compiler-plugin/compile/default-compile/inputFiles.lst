@@ -1,2 +1,5 @@
+/home/c/Archives/dev/cdirect/cdirect-service/src/main/java/org/cdrolet/cdirect/service/CustomerService.java
+/home/c/Archives/dev/cdirect/cdirect-service/src/main/java/org/cdrolet/cdirect/service/NotificationService.java
 /home/c/Archives/dev/cdirect/cdirect-service/src/main/java/org/cdrolet/cdirect/service/SubscriptionService.java
 /home/c/Archives/dev/cdirect/cdirect-service/src/main/java/org/cdrolet/cdirect/service/AuthorizationService.java
+/home/c/Archives/dev/cdirect/cdirect-service/src/main/java/org/cdrolet/cdirect/service/EventProcessor.java
