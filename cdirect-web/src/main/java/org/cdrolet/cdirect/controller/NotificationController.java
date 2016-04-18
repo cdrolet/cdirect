@@ -62,7 +62,7 @@ public class NotificationController {
 
         EventResult result = ex.getErrorCode().toResult(ex.getMessage());
 
-        log.info("returning process error {} ", result);
+        log.warn("returning process error {} ", result);
 
         return result;
     }
@@ -73,7 +73,7 @@ public class NotificationController {
 
         EventResult result = ErrorCode.FORBIDDEN.toResult(ex.getMessage());
 
-        log.info("returning unauthorized error {} ", result);
+        log.warn("returning unauthorized error {} ", result);
 
         return result;
     }
@@ -84,7 +84,7 @@ public class NotificationController {
 
         EventResult result = ErrorCode.UNKNOWN_ERROR.toResult(ex.getMessage());
 
-        log.info("returning process error {} ", result);
+        log.error("sql exception occur {} ", ex);
 
         return result;
     }
