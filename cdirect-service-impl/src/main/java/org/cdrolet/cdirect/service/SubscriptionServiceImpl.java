@@ -92,9 +92,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription subscription = loadPreviousSubscription(event);
 
-        Customer customer = EventToCustomer.INSTANCE.apply(event);
-
-        subscription.addCustomer(customer);
+        String customerId = EventToCustomer.INSTANCE.apply(event).getId();
+        subscription.addCustomer(customerRepo.findOne(customerId));
 
         return subscription;
     }
