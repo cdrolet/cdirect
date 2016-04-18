@@ -34,14 +34,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
 
     @Override
-    public EventResult processEvent(EventDetail event) {
-
-        processCustomer(event);
-
-        return EventResult.builder().success(true).build();
-    }
-
-    @Override
     public Collection<User> getAll() {
 
         Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "id");
@@ -53,6 +45,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public EventResult processEvent(EventDetail event) {
+
+        processCustomer(event);
+
+        return EventResult.builder().success(true).build();
+    }
 
     private Customer processCustomer(EventDetail event) {
         switch (event.getType()) {

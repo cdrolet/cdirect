@@ -31,9 +31,7 @@ public enum OAuthUrlProcessor {
 
         HttpURLConnection connection = connect(consumer, eventUrl);
 
-        if (!isConnectionSuccessful(connection)) {
-            throw new UnauthorizedException("signed connection failed");
-        }
+        checkConnectionSuccessful(connection);
 
         return Utility.fromJson(parseResponse(connection), EventDetail.class);
     }
@@ -71,11 +69,15 @@ public enum OAuthUrlProcessor {
 
     }
 
-    private boolean isConnectionSuccessful(HttpURLConnection connection) {
+    private boolean checkConnectionSuccessful(HttpURLConnection connection) {
         try {
-            return connection.getResponseCode() / 100 == 2;
+            if (connection.getResponseCode() / 100 != 2) {
+                throw new UnauthorizedException(
+                        "signed connection failed, status: " + connection.getResponseCode());
+            }
         } catch (IOException ex) {
-            return false;
+            log.error("error occur when trying to get the connection response", ex);
+            throw new RuntimeException(ex);
         }
     }
 

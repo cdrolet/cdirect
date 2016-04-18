@@ -7,6 +7,7 @@ import org.cdrolet.cdirect.dto.EventResult;
 import org.cdrolet.cdirect.exception.ProcessException;
 import org.cdrolet.cdirect.exception.UnauthorizedException;
 import org.cdrolet.cdirect.service.AuthorizationService;
+import org.cdrolet.cdirect.service.NotificationService;
 import org.cdrolet.cdirect.service.SubscriptionService;
 import org.cdrolet.cdirect.type.ErrorCode;
 import org.springframework.dao.DataAccessException;
@@ -27,7 +28,7 @@ public class NotificationController {
 
     public static final String NOTIFICATION_PATH = "notification";
 
-    private final SubscriptionService subscriptionService;
+    private final NotificationService notificationService;
 
     private final AuthorizationService authService;
 
@@ -38,7 +39,7 @@ public class NotificationController {
 
         EventDetail eventDetail = signedFetch(request, eventUrl);
 
-        EventResult result = subscriptionService.processEvent(eventDetail);
+        EventResult result = notificationService.processEvent(eventDetail);
 
         log.info("returning result {}", result);
 
