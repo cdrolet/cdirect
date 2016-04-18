@@ -1,6 +1,7 @@
 package org.cdrolet.cdirect.service;
 
 import org.cdrolet.cdirect.dto.User;
+import org.cdrolet.cdirect.entity.Customer;
 
 import java.util.Collection;
 
@@ -10,4 +11,6 @@ import java.util.Collection;
 public interface CustomerService extends EventProcessor {
 
     Collection<User> getAll();
+
+    Customer getCustomer(String id);
 }

@@ -45,6 +45,12 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public Customer getCustomer(String id) {
+        return repository.findOne(id);
+    }
+
     @Override
     public EventResult processEvent(EventDetail event) {
 
@@ -70,6 +76,9 @@ public class CustomerServiceImpl implements CustomerService {
     private Customer save(EventDetail event) {
 
         Customer customer = EventToCustomer.INSTANCE.apply(event);
+
+        log.info("saving customer: " + customer.toString());
+
         return repository.save(customer);
 
     }

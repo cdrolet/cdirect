@@ -1,6 +1,5 @@
 package org.cdrolet.cdirect.service;
 
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cdrolet.cdirect.converter.EventToCustomer;
@@ -11,6 +10,7 @@ import org.cdrolet.cdirect.dto.*;
 import org.cdrolet.cdirect.entity.Customer;
 import org.cdrolet.cdirect.entity.Subscription;
 import org.cdrolet.cdirect.exception.ProcessException;
+import org.cdrolet.cdirect.repository.CustomerRepository;
 import org.cdrolet.cdirect.repository.SubscriptionRepository;
 import org.cdrolet.cdirect.type.ErrorCode;
 import org.cdrolet.cdirect.type.NoticeType;
@@ -34,7 +34,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private final SubscriptionRepository repository;
+    private final SubscriptionRepository subscriptionRepo;
+    private final CustomerRepository customerRepo;
 
     @Override
     public EventResult processEvent(EventDetail event) {
@@ -47,7 +48,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "id");
 
-        Page<Subscription> page = repository.findAll(pageable);
+        Page<Subscription> page = subscriptionRepo.findAll(pageable);
 
         return page.getContent().stream()
                 .map(SubscriptionToSubscriber.INSTANCE)
@@ -78,10 +79,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = EventToSubscription.INSTANCE.apply(event);
         subscription.setActive(true);
 
-        Customer customer = EventToCustomer.INSTANCE.apply(event);
-        subscription.addCustomer(customer);
+        log.info("saving subscription: " + subscription.toString());
 
-        return repository.save(subscription);
+        String customerId = EventToCustomer.INSTANCE.apply(event).getId();
+        subscription.addCustomer(customerRepo.findOne(customerId));
+
+        return subscriptionRepo.save(subscription);
 
     }
 
@@ -104,7 +107,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 previous,
                 EventToSubscription.INSTANCE.apply(event));
 
-        return repository.save(subscription);
+        return subscriptionRepo.save(subscription);
 
     }
 
@@ -113,7 +116,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription previous = loadPreviousSubscription(event);
 
-        repository.delete(getId(event));
+        subscriptionRepo.delete(getId(event));
 
         return previous;
     }
@@ -122,7 +125,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         String id = getId(event);
 
-        Subscription subscription = repository.findOne(getId(event));
+        Subscription subscription = subscriptionRepo.findOne(getId(event));
 
         checkNotNull(subscription, ErrorCode.ACCOUNT_NOT_FOUND, "account identifier: " + id + " not found");
 
