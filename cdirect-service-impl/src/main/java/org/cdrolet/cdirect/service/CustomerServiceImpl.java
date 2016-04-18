@@ -87,6 +87,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = repository.findOne(getUserId(event));
 
+        if (customer == null) {
+            throw new ProcessException( "user " + getUserId(event) + "not found", ErrorCode.USER_NOT_FOUND);
+        }
+
         if (customer.getDefaultUser()) {
             throw new ProcessException("can't unassign the default user", ErrorCode.FORBIDDEN);
         }
