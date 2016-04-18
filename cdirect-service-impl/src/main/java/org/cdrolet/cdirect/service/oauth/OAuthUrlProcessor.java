@@ -69,7 +69,7 @@ public enum OAuthUrlProcessor {
 
     }
 
-    private boolean checkConnectionSuccessful(HttpURLConnection connection) {
+    private void checkConnectionSuccessful(HttpURLConnection connection) {
         try {
             if (connection.getResponseCode() / 100 != 2) {
                 throw new UnauthorizedException(
