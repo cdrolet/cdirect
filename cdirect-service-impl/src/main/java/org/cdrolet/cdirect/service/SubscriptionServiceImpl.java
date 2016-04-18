@@ -82,6 +82,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         log.info("saving subscription: " + subscription.toString());
 
         String customerId = EventToCustomer.INSTANCE.apply(event).getId();
+        // customer was already saved from customer service
         subscription.addCustomer(customerRepo.findOne(customerId));
 
         return subscriptionRepo.save(subscription);

@@ -54,7 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
             case SUBSCRIPTION_NOTICE:
                 return ImmutableList.of(subscriptionService);
             case USER_ASSIGNMENT:
-                return ImmutableList.of(subscriptionService, customerService);
+                return ImmutableList.of(customerService, subscriptionService);
             case USER_UNASSIGNMENT:
             case USER_UPDATED:
                 return ImmutableList.of(customerService);
