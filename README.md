@@ -1,5 +1,5 @@
 # Cdirect
-A sample application that integrate with AppDirect
+A sample application
 
 ## Instruction for running locally
   
